@@ -30,6 +30,7 @@ nav.register_element('frontend_top', Navbar(
     View('Tamagotchi', '.home'),
     View('Deslogar', '.logout'),
     View('Criar Tamagotchi', '.novotamagotchi'),
+    View('Ranking', '.rank'),
     ))
 
 
@@ -48,7 +49,9 @@ def MyTamagotchis(id=None):
 @frontend.route('/tamagotchiform')
 def novotamagotchi():
     return render_template('tamagotchi_form.html')
+
 @frontend.route('/')
+
 @frontend.route('/tamagotchi/<id>')
 def home(id=None):
     if not session.get('logged_in'):
@@ -118,3 +121,7 @@ def cadastrar():
 
     s.commit()
     return home()
+
+@frontend.route('/ranking')
+def rank():
+    return render_template('rank.html')

@@ -1,0 +1,14 @@
+{%- extends "base.html" %}
+
+{% import "bootstrap/utils.html" as utils %}
+
+
+{% block content %}
+    <div class="col-sm-2">
+        <ul class="list-group text-center">
+        {% for tama in tamagotchis %}
+            <a href="/tamagotchi/{{tama.id}}" class="list-group-item">{{ tama.name }}</a>
+        {% endfor %}
+        </ul>
+    </div>
+{%- endblock %}
