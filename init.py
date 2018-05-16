@@ -4,7 +4,7 @@ from flask_bootstrap import Bootstrap
 from frontend import frontend
 from nav import nav
 from flask_debug import Debug
-
+import os
 
 def create_app(configfile=None):
     # We are using the "Application Factory"-pattern here, which is described
@@ -13,6 +13,7 @@ def create_app(configfile=None):
 
     app = Flask(__name__)
     
+    app.secret_key = os.urandom(12)
     Debug(app)
     # We use Flask-Appconfig here, but this is not a requirement
     AppConfig(app)

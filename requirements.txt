@@ -4,5 +4,7 @@ paste
 flask_bootstrap
 flask_appconfig
 flask_nav
+flask-login
+flask-SqlAlchemy
 flask-debug
 flask-wtf

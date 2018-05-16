@@ -15,7 +15,9 @@
             {%- endif %}
         {%- endwith %}
         <div class="text-center">
-            <h1>Ola Mundo</h1>
+            {%- if name %}
+                <h1>Ola {{name}}</h1>
+            {%- endif %}
         </div>
     </div>
  {%- endblock %}
