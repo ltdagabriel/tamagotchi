@@ -36,29 +36,28 @@ nav.register_element('frontend_top', Navbar(
 # Our index-page just shows a quick explanation. Check out the template
 # "templates/index.html" documentation for more details.
 
-def MyTamagotchis(username):
-    tamagotchis=[]
-    
+def MyTamagotchis(id=None):
     s = sessionmaker(bind=engine)()
     user = s.query(User).filter(User.username.in_([session.get('username')])).first()
-    query = s.query(Tamagotchi).filter(Tamagotchi.user_id.in_([user.id]) ) 
+    if id:
+        query = s.query(Tamagotchi).filter(Tamagotchi.id.in_([id]) ).first() 
+    else:
+        query = s.query(Tamagotchi).filter(Tamagotchi.user_id.in_([user.id]) ) 
     return query
-    
-    tamagotchis.append(Tamagotchi_class)
-
-    return tamagotchis
 
 @frontend.route('/tamagotchiform')
 def novotamagotchi():
     return render_template('tamagotchi_form.html')
-
 @frontend.route('/')
-def home():
-    
+@frontend.route('/tamagotchi/<id>')
+def home(id=None):
     if not session.get('logged_in'):
         return render_template('login.html')
     else:
-        return render_template('index.html', tamagotchi=MyTamagotchis("gabriel"), index=0 )
+        tama= MyTamagotchis(id)
+        if not id:
+            tama = MyTamagotchis().first()
+        return render_template('index.html', tamagotchis=MyTamagotchis(), tamagotchi=tama, id=id)
  
 @frontend.route('/cadastrar')
 def cadastro():
