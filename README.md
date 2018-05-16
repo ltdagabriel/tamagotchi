@@ -8,6 +8,7 @@ Install requirements
 ADD FLASK_APP
 
     set FLASK_APP=init.py
+    set FLASK_ENV=development
 
 RUN
 

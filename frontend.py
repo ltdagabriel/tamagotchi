@@ -16,8 +16,11 @@ from flask_nav.elements import Navbar, View
 from markupsafe import escape
 
 from nav import nav
+from datetime import datetime
 
 frontend = Blueprint('frontend', __name__)
+
+
 
 
 # We're adding a navbar as well through flask-navbar. In our example, the
@@ -31,6 +34,27 @@ nav.register_element('frontend_top', Navbar(
 
 # Our index-page just shows a quick explanation. Check out the template
 # "templates/index.html" documentation for more details.
+class Tamagotchi:
+    user = "test"
+    name = "Test"
+    birthday = datetime.now()
+    last_update = datetime.now()
+    health = 70
+    happy = 20
+    hunger = 50
+    state = "Ok"
+    
+    def __str__(self):
+        return self.name
+    
+
+
+def MyTamagotchis(username):
+    tamagotchis=[]
+
+    tamagotchis.append(Tamagotchi)
+
+    return tamagotchis
 
 
 @frontend.route('/')
@@ -38,7 +62,7 @@ def home():
     if not session.get('logged_in'):
         return render_template('login.html')
     else:
-        return render_template('index.html', name=session['username'] )
+        return render_template('index.html', tamagotchi=MyTamagotchis("gabriel"), index=0 )
  
 @frontend.route('/cadastrar')
 def cadastro():

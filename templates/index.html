@@ -14,10 +14,42 @@
                 </div>
             {%- endif %}
         {%- endwith %}
-        <div class="text-center">
-            {%- if name %}
-                <h1>Ola {{name}}</h1>
-            {%- endif %}
+        <div class="row">
+            <div class="col-sm-8">
+                {%- if tamagotchi[index] %}
+                    <h3>Tamagotchi name: {{tamagotchi[index].name}}</h3>
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <h4 class="text-center"><strong>Vida</strong></h4>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi[index].health}}%">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <h4 class="text-center"><strong>Felicidade</strong></h4>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi[index].happy}}%;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <h4 class="text-center"><strong>Fome</strong></h4>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi[index].hunger}}%;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {%- endif %}
+            </div>
+            <div class="col-sm-4">
+                <ul class="list-group text-center">
+                {% for tama in tamagotchi %}
+                    <li class="list-group-item">{{ tama.name }}</li>
+                {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
  {%- endblock %}
