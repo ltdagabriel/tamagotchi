@@ -18,17 +18,17 @@
             <div class="form-group">
               <label for="nome">Nome</label>
               <input type="text" class="form-control" id="nome" name="nome" aria-describedby="loginHelp" placeholder="Digite o nome do Tamagotchi">
-              
+                
+              <!-- Opcoes de Tamagotchi -->
+              <label for = "poke">
+                <input type="radio" name="poke" id="poke" value="small" />
+                <img src="{{url_for('static', filename='imagens/sqr1.gif')}}">
+              </label>
             
               <button type="submit" onclick="location.href='/'" class="btn btn-primary">Cadastrar</button>
             </div>
 
         </form>
-        <!-- Opcoes de Tamagotchi -->
-        <label>
-          <input type="radio" name="poke" value="small" />
-          <img src="{{url_for('static', filename='imagens/sqr1.gif')}}">
-        </label>
 
    </div>
 {%- endblock %}
