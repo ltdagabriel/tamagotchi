@@ -17,7 +17,7 @@ from markupsafe import escape
 
 from nav import nav
 from datetime import datetime
-
+import os
 frontend = Blueprint('frontend', __name__)
 
 
@@ -47,6 +47,7 @@ def MyTamagotchis(id=None):
 
 @frontend.route('/tamagotchiform')
 def novotamagotchi():
+    # pokes= os.listdir('static/imagens/')
     return render_template('tamagotchi_form.html')
 @frontend.route('/')
 @frontend.route('/tamagotchi/<id>')

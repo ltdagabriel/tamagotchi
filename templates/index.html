@@ -49,9 +49,13 @@
                 {%- endif %}
             </div>
             <div class="col-sm-2">
-                <ul class="list-group text-center">
+                <ul class="list-group">
                 {% for tama in tamagotchis %}
-                    <a href="/tamagotchi/{{tama.id}}" class="list-group-item">{{ tama.name }}</a>
+                <div class="list-group-item">
+                    <a href="/tamagotchi/{{tama.id}}">{{ tama.name }}</a>
+                    <img src="{{url_for('static', filename='imagens/char1.gif')}}"  style=" width:30px; margin-rigth:0px" >
+                </div>
+
                 {% endfor %}
                 </ul>
             </div>
