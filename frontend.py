@@ -90,11 +90,12 @@ def logout():
 def do_novo_tamagotchi():
  
     POST_NOME = str(request.form['nome'])
+    IMAGEM = str(request.form['poke'])
     Session = sessionmaker(bind=engine)
     s = Session()
     # print()
     user = s.query(User).filter(User.username.in_([session.get('username')])).first()
-    tamago = Tamagotchi(POST_NOME, user.id)
+    tamago = Tamagotchi(POST_NOME, user.id, IMAGEM)
 
     s.add(tamago)
 

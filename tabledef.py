@@ -30,6 +30,7 @@ class Tamagotchi(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     name = Column(String)
+    imagem = Column(String)
     birthday = Column(DateTime, default=datetime.utcnow)
     last_update = Column(DateTime, default=datetime.utcnow)
     state = Column(String, default='Saudavel')
@@ -37,10 +38,11 @@ class Tamagotchi(Base):
     happy = Column(Float, default=100.0) 
     health = Column(Float, default=100.0)
     
-    def __init__(self, name, user_id):
+    def __init__(self, name, user_id, imagem):
         """"""
         self.name = name
         self.user_id = user_id
+        self.imagem = imagem
  
 
 
