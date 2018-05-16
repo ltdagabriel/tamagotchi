@@ -29,6 +29,7 @@ frontend = Blueprint('frontend', __name__)
 nav.register_element('frontend_top', Navbar(
     View('Tamagotchi', '.home'),
     View('Deslogar', '.logout'),
+    View('Criar Tamagotchi', '.novotamagotchi'),
     ))
 
 
@@ -56,6 +57,9 @@ def MyTamagotchis(username):
 
     return tamagotchis
 
+@frontend.route('/tamagotchiform')
+def novotamagotchi():
+    return render_template('tamagotchi_form.html')
 
 @frontend.route('/')
 def home():
@@ -89,6 +93,22 @@ def do_admin_login():
 def logout():
     session['logged_in'] = False
     session['username'] = None
+    return home()
+
+@frontend.route('/novotamagotchi', methods=['POST'])
+def do_novo_tamagotchi():
+ 
+    POST_NOME = str(request.form['nome'])
+    Session = sessionmaker(bind=engine)
+    s = Session()
+    # print()
+    user = s.query(User).filter(User.username.in_([POST_USERNAME])).first()
+    tamago = Tamagotchi(POST_NOME, user.id)
+
+    s.add(tamago)
+
+    s.commit()
+
     return home()
  
 
