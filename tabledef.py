@@ -23,11 +23,12 @@ class User(Base):
         self.username = username
         self.password = password
  
- class Tamagotchi(Base):
+class Tamagotchi(Base):
+    """"""
     __tablename__ = "tamagotchis"
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, nullable=False, ForeignKey('user.id'))
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     name = Column(String)
     birthday = Column(DateTime, default=datetime.utcnow)
     last_update = Column(DateTime, default=datetime.utcnow)
@@ -35,6 +36,12 @@ class User(Base):
     hunger = Column(Float, default=100.0) 
     happy = Column(Float, default=100.0) 
     health = Column(Float, default=100.0)
+    
+    def __init__(self, name, user_id):
+        """"""
+        self.name = name
+        self.user_id = user_id
+ 
 
 
 # create tables

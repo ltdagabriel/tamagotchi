@@ -5,7 +5,7 @@
 # You can find out more about blueprints at
 # http://flask.pocoo.org/docs/blueprints/
 
-from flask import Flask, flash, redirect, render_template, request, session, abort
+from flask import Flask, flash, redirect, render_template, request, session, abort, redirect
 
 from sqlalchemy.orm import sessionmaker
 from tabledef import *
@@ -35,25 +35,16 @@ nav.register_element('frontend_top', Navbar(
 
 # Our index-page just shows a quick explanation. Check out the template
 # "templates/index.html" documentation for more details.
-class Tamagotchi:
-    user = "test"
-    name = "Test"
-    birthday = datetime.now()
-    last_update = datetime.now()
-    health = 70
-    happy = 20
-    hunger = 50
-    state = "Ok"
-    
-    def __str__(self):
-        return self.name
-    
-
 
 def MyTamagotchis(username):
     tamagotchis=[]
-
-    tamagotchis.append(Tamagotchi)
+    
+    s = sessionmaker(bind=engine)()
+    user = s.query(User).filter(User.username.in_([session.get('username')])).first()
+    query = s.query(Tamagotchi).filter(Tamagotchi.user_id.in_([user.id]) ) 
+    return query
+    
+    tamagotchis.append(Tamagotchi_class)
 
     return tamagotchis
 
@@ -63,6 +54,7 @@ def novotamagotchi():
 
 @frontend.route('/')
 def home():
+    
     if not session.get('logged_in'):
         return render_template('login.html')
     else:
@@ -102,14 +94,14 @@ def do_novo_tamagotchi():
     Session = sessionmaker(bind=engine)
     s = Session()
     # print()
-    user = s.query(User).filter(User.username.in_([POST_USERNAME])).first()
+    user = s.query(User).filter(User.username.in_([session.get('username')])).first()
     tamago = Tamagotchi(POST_NOME, user.id)
 
     s.add(tamago)
 
     s.commit()
 
-    return home()
+    return  redirect('/')
  
 
 
