@@ -1,7 +1,6 @@
 
 {%- extends "bootstrap/base.html" %}
 
-
 {% block title %}Tamagotchi{% endblock %}
 
 {# While we are at it, we also enable fixes for legacy browsers. First we
@@ -12,6 +11,7 @@
    ``super()`` is used: #}
 {% block head %}
 {{super()}}
+<meta http-equiv="refresh" content="1" >
 
 {#- Docs: http://pythonhosted.org/Flask-Bootstrap/macros.html#fixes
    The sample application already contains the required static files. #}

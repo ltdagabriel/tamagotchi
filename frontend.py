@@ -71,7 +71,7 @@ def index():
 @frontend.route('/tamagotchi/<id>')
 def home(id=None):
     tama= MyTamagotchis(id)
-    return render_template('index.html', tamagotchis=MyTamagotchis(), tamagotchi=tama)
+    return render_template('index.html', tamagotchis=MyTamagotchis(), tamagotchi=tama, now=datetime.now().time())
  
 @frontend.route('/cadastrar')
 def cadastro():
