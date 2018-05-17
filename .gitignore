@@ -3,3 +3,5 @@
 tutorial.db
 *.db
 *.pyc
+*.pyc
+*.db

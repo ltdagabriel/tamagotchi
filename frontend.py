@@ -5,7 +5,7 @@
 # You can find out more about blueprints at
 # http://flask.pocoo.org/docs/blueprints/
 
-from flask import Flask, flash, redirect, render_template, request, session, abort, redirect
+from flask import Flask, flash, redirect, url_for, render_template, request, session, abort, redirect
 
 from sqlalchemy.orm import sessionmaker
 from tabledef import *
@@ -43,7 +43,7 @@ def MyTamagotchis(id=None):
     if id:
         query = s.query(Tamagotchi).filter(Tamagotchi.id.in_([id]) ).first() 
     else:
-        query = s.query(Tamagotchi).filter(Tamagotchi.user_id.in_([user.id]) ) 
+        query = s.query(Tamagotchi).filter(Tamagotchi.user_id.in_([user.id]) )
     return query
 
 def AllTamagotchis():
@@ -57,16 +57,21 @@ def novotamagotchi():
     return render_template('tamagotchi_form.html')
 
 @frontend.route('/')
-
-@frontend.route('/tamagotchi/<id>')
-def home(id=None):
+def index():
     if not session.get('logged_in'):
         return render_template('login.html')
     else:
-        tama= MyTamagotchis(id)
-        if not id:
-            tama = MyTamagotchis().first()
-        return render_template('index.html', tamagotchis=MyTamagotchis(), tamagotchi=tama, id=id)
+        tama = MyTamagotchis().first()
+        if tama:
+            return  redirect(url_for('.home',id=tama.id)) 
+        else:
+            return redirect(url_for('.home'))
+
+@frontend.route('/tamagotchi')
+@frontend.route('/tamagotchi/<id>')
+def home(id=None):
+    tama= MyTamagotchis(id)
+    return render_template('index.html', tamagotchis=MyTamagotchis(), tamagotchi=tama, id=id)
  
 @frontend.route('/cadastrar')
 def cadastro():
@@ -86,14 +91,14 @@ def do_admin_login():
         session['logged_in'] = True
         session['username'] = POST_USERNAME
     else:
-        flash('wrong password!')
-    return home()
+        flash('"wrong" password!')
+    return redirect(url_for('.index'))
  
 @frontend.route("/logout")
 def logout():
     session['logged_in'] = False
     session['username'] = None
-    return home()
+    return redirect(url_for('.index'))
 
 @frontend.route('/novotamagotchi', methods=['POST'])
 def do_novo_tamagotchi():
@@ -126,7 +131,7 @@ def cadastrar():
     s.add(user)
 
     s.commit()
-    return home()
+    return redirect(url_for('.index'))
 
 @frontend.route('/ranking')
 def rank():
