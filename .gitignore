@@ -5,3 +5,7 @@ tutorial.db
 *.pyc
 *.pyc
 *.db
+*.xml
+*.iml
+*.pyc
+*.pyc

@@ -27,7 +27,7 @@ frontend = Blueprint('frontend', __name__)
 # navbar has an usual amount of Link-Elements, more commonly you will have a
 # lot more View instances.
 nav.register_element('frontend_top', Navbar(
-    View('Tamagotchi', '.home'),
+    View('Tamagotchi', '.index'),
     View('Deslogar', '.logout'),
     View('Criar Tamagotchi', '.novotamagotchi'),
     View('Ranking', '.rank'),
@@ -71,7 +71,7 @@ def index():
 @frontend.route('/tamagotchi/<id>')
 def home(id=None):
     tama= MyTamagotchis(id)
-    return render_template('index.html', tamagotchis=MyTamagotchis(), tamagotchi=tama, id=id)
+    return render_template('index.html', tamagotchis=MyTamagotchis(), tamagotchi=tama)
  
 @frontend.route('/cadastrar')
 def cadastro():
