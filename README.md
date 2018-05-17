@@ -12,4 +12,4 @@ ADD FLASK_APP
 
 RUN
 
-    Python -m flask run
+    Python -m flask run --host=0.0.0.0 --port=80

@@ -17,7 +17,7 @@ def create_app(configfile=None):
     Debug(app)
     # We use Flask-Appconfig here, but this is not a requirement
     AppConfig(app)
-
+    app.run(host='0.0.0.0', port=80)
     # Install our Bootstrap extension
     Bootstrap(app)
 
