@@ -46,6 +46,12 @@ def MyTamagotchis(id=None):
         query = s.query(Tamagotchi).filter(Tamagotchi.user_id.in_([user.id]) ) 
     return query
 
+def AllTamagotchis():
+    s = sessionmaker(bind=engine)()
+    todos = s.query(Tamagotchi).all()
+
+    return todos
+
 @frontend.route('/tamagotchiform')
 def novotamagotchi():
     return render_template('tamagotchi_form.html')
@@ -124,4 +130,4 @@ def cadastrar():
 
 @frontend.route('/ranking')
 def rank():
-    return render_template('rank.html')
+    return render_template('rank.html', tamagotchis=AllTamagotchis())
