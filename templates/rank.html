@@ -5,12 +5,17 @@
 <!-- href="/tamagotchi/{{tama.id}}" -->
 
 {% block content %}
-    <div class="col-sm-2">
-        <ul class="list-group text-center">
-        {% for tama in tamagotchis %}
-            <li  class="list-group-item">{{ tama.name }}</li>
-            <img src="{{url_for('static', filename='pokemons/'+tama.name_pokemon+'1.gif')}}"  style=" width:30px; margin-rigth:0px" >
-        {% endfor %}
-        </ul>
-    </div>
+            <div class="col-sm-12 col-md-12">
+                <ul class="list-group text-center">
+                {% for tama in tamagotchis %}
+                <div class="list-group-item">
+                    <p>Nome:{{ tama.name }}</p>
+                    <p>Idade: {{  tama.last_update - tama.birthday}}</p>
+                    <p>Criador: {{pegaCriadorDoTamagotchi(tama.id).username}}</p>
+                    
+                    <img src="{{url_for('static', filename='pokemons/'+tama.name_pokemon+'1.gif')}}"  style=" width:30px; margin-rigth:0px" >
+                </div>
+                {% endfor %}
+                </ul>
+            </div>
 {%- endblock %}
