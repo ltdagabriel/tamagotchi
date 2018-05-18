@@ -52,35 +52,28 @@ def UpdateTamagotchi(s,tamagotchi):
     deltaTime = (datetime.now() - tamagotchi.last_update).total_seconds()
 
     tamagotchi.last_update = datetime.now()
+    if (tamagotchi.happy <= 0 or tamagotchi.health <= 0 or tamagotchi.hunger <= 0):
+        tamagotchi.state = 'Morto'
 
     # atualiza estados
     if (tamagotchi.happy < 25):
         tamagotchi.state = 'Triste'
 
-    elif (tamagotchi.health < 25):
+    if (tamagotchi.health < 25):
         tamagotchi.state = 'Doente'
 
-    elif (tamagotchi.hunger < 60):
+    if (tamagotchi.hunger < 60):
         tamagotchi.state = 'Faminto'
 
-    elif (tamagotchi.happy <= 0 or tamagotchi.health <= 0 or tamagotchi.hunger <= 0):
-        tamagotchi.state = 'Morto'
+    
 
-    if (tamagotchi.state == 'Saudavel'):
-        hungerRate = 0.01
-        healthRate = 0.01
-        happyRate = 0.01
-    elif (tamagotchi.state == 'Doente'):
-        hungerRate = 0.005
+    if (tamagotchi.state == 'Doente'):
         healthRate = 0.06
-        happyRate = 0.03
-    elif (tamagotchi.state == 'Faminto'):
+
+    if (tamagotchi.state == 'Faminto'):
         hungerRate = 0.05
-        healthRate = 0.02
-        happyRate = 0.03
-    elif (tamagotchi.state == 'Triste'):
-        hungerRate = 0.05
-        healthRate = 0.03
+
+    if (tamagotchi.state == 'Triste'):
         happyRate = 0.07
 
     tamagotchi.hunger = tamagotchi.hunger - hungerRate * deltaTime if tamagotchi.hunger - hungerRate * deltaTime >= 0 else 0
