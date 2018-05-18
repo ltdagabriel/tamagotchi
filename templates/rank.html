@@ -9,7 +9,7 @@
         <ul class="list-group text-center">
         {% for tama in tamagotchis %}
             <li  class="list-group-item">{{ tama.name }}</li>
-            <img src="{{url_for('static', filename='pokemons/'+tama.imagem+'1.gif')}}"  style=" width:30px; margin-rigth:0px" >
+            <img src="{{url_for('static', filename='pokemons/'+tama.name_pokemon+'1.gif')}}"  style=" width:30px; margin-rigth:0px" >
         {% endfor %}
         </ul>
     </div>

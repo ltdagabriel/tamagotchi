@@ -1,11 +1,11 @@
 def update(self):
 	deltaTime = Time.currentTime - Persistence.loadState().lastTime
 	
-	# máquina de estados do vpet
-	# if (state == 'normal'):
-	# taxas estão relacionadas ao estado atual do Pet
+	 máquina de estados do vpet
+	 if (state == 'normal'):
+	 taxas estão relacionadas ao estado atual do Pet:
 	hungerRate = 5; healthRate = 4; happyRate = 3
-	# atualiza itens de status (versão "muito simples")
+	 atualiza itens de status (versão "muito simples")
 	hunger = hunger - (hungerRate * random.uniform(0.8, 1.2)) * deltaTime
 	health = health - (healthRate * random.uniform(0.9, 1.1)) * deltaTime
 	happy = happy - (happyRate * random.uniform(0.85, 1.15)) * deltaTime
