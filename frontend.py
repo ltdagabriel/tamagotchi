@@ -44,7 +44,7 @@ nav.register_element('no_login', Navbar(
 # "templates/index.html" documentation for more details.
 def UpdateTamagotchi(s,tamagotchi):
     if ( tamagotchi.state == 'Morto'):
-        return
+        return "It's Dead"
 
     hungerRate = 0.01
     healthRate = 0.01
@@ -83,24 +83,24 @@ def UpdateTamagotchi(s,tamagotchi):
         healthRate = 0.03
         happyRate = 0.07
 
-    tamagotchi.hunger = tamagotchi.hunger - hungerRate * deltaTime
-    tamagotchi.happy = tamagotchi.happy - happyRate * deltaTime
-    tamagotchi.health = tamagotchi.health - healthRate * deltaTime
-
+    tamagotchi.hunger = tamagotchi.hunger - hungerRate * deltaTime if tamagotchi.hunger - hungerRate * deltaTime >= 0 else 0
+    tamagotchi.happy = tamagotchi.happy - happyRate * deltaTime if tamagotchi.happy - happyRate * deltaTime >= 0 else 0
+    tamagotchi.health = tamagotchi.health - healthRate * deltaTime if tamagotchi.health - healthRate * deltaTime >= 0 else 0
 
     s.commit()
+    return "Commit Success"
 
 
 def MyTamagotchis(id=None):
     s = sessionmaker(bind=engine)()
     user = s.query(User).filter(User.username.in_([session.get('username')])).first()
     if id:
-        query = s.query(Tamagotchi).filter(Tamagotchi.id.in_([id])).first()
+        query = s.query(Tamagotchi).filter(Tamagotchi.id.in_([id]), Tamagotchi.user_id.in_([user.id])).first()
     else:
         query = s.query(Tamagotchi).filter(Tamagotchi.user_id.in_([user.id]))
 
         for tamagotchi in query:
-            UpdateTamagotchi(s, tamagotchi)
+            print("\n------------", UpdateTamagotchi(s, tamagotchi), "--------------\n")
     return query
 
 def AllTamagotchis():
@@ -123,6 +123,37 @@ def index():
             return redirect(url_for('.home', id=tama.id))
         else:
             return redirect(url_for('.home'))
+
+
+@frontend.route('/tamagotchi/<id>/health')
+@frontend.route('/tamagotchi/<id>/health/<value>')
+def health(id=None, value=20):
+    s = sessionmaker(bind=engine)()
+    tama = s.query(Tamagotchi).filter(Tamagotchi.id.in_([id])).first()
+    tama.health = tama.health + float(value) if tama.health + float(value) <= 100 else 100
+    s.commit()
+    return redirect(url_for('.home', id=id))
+
+
+@frontend.route('/tamagotchi/<id>/hunger')
+@frontend.route('/tamagotchi/<id>/hunger/<value>')
+def hunger(id=None, value=20):
+    s = sessionmaker(bind=engine)()
+    tama = s.query(Tamagotchi).filter(Tamagotchi.id.in_([id])).first()
+    tama.hunger = tama.hunger + float(value) if tama.hunger + float(value) <= 100 else 100
+    s.commit()
+    return redirect(url_for('.home', id=id))
+
+
+@frontend.route('/tamagotchi/<id>/happy')
+@frontend.route('/tamagotchi/<id>/happy/<value>')
+def happy(id=None, value=20):
+    s = sessionmaker(bind=engine)()
+    tama = s.query(Tamagotchi).filter(Tamagotchi.id.in_([id])).first()
+    tama.happy = tama.happy + float(value) if tama.happy + float(value) <= 100 else 100
+    s.commit()
+    return redirect(url_for('.home', id=id))
+
 
 @frontend.route('/tamagotchi')
 @frontend.route('/tamagotchi/<id>')

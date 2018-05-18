@@ -18,7 +18,8 @@
         <div class="row">
             <div class="col-sm-9 col-md-10">
                 {%- if tamagotchi %}
-                    <h3>Nome: {{tamagotchi.name}},  Idade:{{ now }}</h3>
+                    <div class="col-sm-6 text-uppercase text-left"><h3>{{tamagotchi.name}}</h3></div>
+                    <div class="col-sm-6 text-right"><h3>{{ tamagotchi.last_update - tamagotchi.birthday }}</h3></div>
 
                     <div class="row">
                         <div
@@ -32,46 +33,61 @@
                                background-repeat: no-repeat;
                                    "
                         >
-                        <div class="row container-fluid">
-                            <div class="col-sm-4" style="margin-top: 10px">
-                                <div class="col-sm-2">
-                                    <img style="width: 120%;float: left" src="{{url_for('static', filename='icones/coracao.gif')}}" >
+                            <div class="row container-fluid">
+                                <div class="col-sm-4" style="margin-top: 10px">
+                                    <div class="col-sm-2">
+                                        <img style="width: 120%;float: left" src="{{url_for('static', filename='icones/coracao.gif')}}" >
+                                    </div>
+                                    <div class="col-sm-10">
+                                         <div class="progress">
+                                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi.health}}%;">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="col-sm-10">
-                                     <div class="progress">
-                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi.health}}%;">
+                                <div class="col-sm-4" style="margin-top: 10px">
+                                    <div class="col-sm-2">
+                                        <img style="width: 120%;float: left" src="{{url_for('static', filename='icones/smile.gif')}}" >
+                                    </div>
+                                    <div class="col-sm-10">
+                                         <div class="progress">
+                                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi.happy}}%;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4" style="margin-top: 10px">
+                                    <div class="col-sm-2">
+                                        <img style="width: 120%;float: left" src="{{url_for('static', filename='icones/pizza.gif')}}" >
+                                    </div>
+                                    <div class="col-sm-10">
+                                         <div class="progress">
+                                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi.hunger}}%;">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-4" style="margin-top: 10px">
-                                <div class="col-sm-2">
-                                    <img style="width: 120%;float: left" src="{{url_for('static', filename='icones/smile.gif')}}" >
-                                </div>
-                                <div class="col-sm-10">
-                                     <div class="progress">
-                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi.happy}}%;">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-sm-4" style="margin-top: 10px">
-                                <div class="col-sm-2">
-                                    <img style="width: 120%;float: left" src="{{url_for('static', filename='icones/pizza.gif')}}" >
-                                </div>
-                                <div class="col-sm-10">
-                                     <div class="progress">
-                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi.hunger}}%;">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
                             <div style="position: relative; margin-left: 50%; float: bottom;top: 60%">
                                 <img
                                         style="width: 15%; height: 15%"
                                         src="{{url_for('static', filename='pokemons/'+tamagotchi.name_pokemon+'1.gif')}}" >
+                            </div>
+
+                            <!-- Split dropup button -->
+                            <div class="dropup" style="float: bottom; top:65%;">
+                              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Ações
+                                <span class="caret"></span>
+                              </button>
+                              <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                <li><a href="/tamagotchi/{{ tamagotchi.id }}/health/10">Aplicar Curativo</a></li>
+                                <li role="separator" class="divider">
+                                <li><a href="/tamagotchi/{{ tamagotchi.id }}/happy/10">Brincar</a></li>
+                                <li role="separator" class="divider">
+                                <li><a href="/tamagotchi/{{ tamagotchi.id }}/hunger/10">Alimentar</a></li>
+                              </ul>
                             </div>
 
                         </div>
