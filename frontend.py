@@ -5,7 +5,7 @@
 # You can find out more about blueprints at
 # http://flask.pocoo.org/docs/blueprints/
 
-from flask import flash, url_for, request, session, redirect
+from flask import flash, url_for, request, session, redirect, jsonify
 
 from sqlalchemy.orm import sessionmaker
 from tabledef import *
@@ -56,13 +56,13 @@ def UpdateTamagotchi(s,tamagotchi):
         tamagotchi.state = 'Morto'
 
     # atualiza estados
-    if (tamagotchi.happy < 25):
+    elif (tamagotchi.happy < 60):
         tamagotchi.state = 'Triste'
 
-    if (tamagotchi.health < 25):
+    elif (tamagotchi.health < 60):
         tamagotchi.state = 'Doente'
 
-    if (tamagotchi.hunger < 60):
+    elif (tamagotchi.hunger < 60):
         tamagotchi.state = 'Faminto'
 
     
@@ -103,9 +103,26 @@ def AllTamagotchis():
         print("\n------------", UpdateTamagotchi(s, tamagotchi), "--------------\n")
     return sorted(todos, key= lambda tama: (tama.last_update - tama.birthday).total_seconds(), reverse= True)
 
+
+@frontend.route('/load', methods=['POST'])
+def load_tamagotchi():
+    id = request.form['id']
+    tamagotchi = MyTamagotchis(int(id)) 
+    return jsonify( 
+        {
+            'name': tamagotchi.name,
+            'happy': tamagotchi.happy,
+            'hunger': tamagotchi.hunger,
+            'health': tamagotchi.health,
+            'age': (tamagotchi.last_update - tamagotchi.birthday).total_seconds()
+        })
+
+
 @frontend.route('/tamagotchiform')
 def novotamagotchi():
     return render_template('tamagotchi_form.html')
+
+
 
 @frontend.route('/')
 def index():
