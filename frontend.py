@@ -43,6 +43,8 @@ nav.register_element('no_login', Navbar(
 # Our index-page just shows a quick explanation. Check out the template
 # "templates/index.html" documentation for more details.
 def UpdateTamagotchi(s,tamagotchi):
+    if ( tamagotchi.state == 'Morto'):
+        return
 
     hungerRate = 5
     healthRate = 5
