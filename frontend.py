@@ -17,7 +17,7 @@ from markupsafe import escape
 import os
 from nav import nav
 from datetime import datetime
-
+import random
 frontend = Blueprint('frontend', __name__)
 
 
@@ -26,6 +26,8 @@ frontend = Blueprint('frontend', __name__)
 # We're adding a navbar as well through flask-navbar. In our example, the
 # navbar has an usual amount of Link-Elements, more commonly you will have a
 # lot more View instances.
+
+# navbar logado
 nav.register_element('frontend_top', Navbar(
     View('Tamagotchi', '.index'),
     View('Deslogar', '.logout'),
@@ -33,17 +35,41 @@ nav.register_element('frontend_top', Navbar(
     View('Ranking', '.rank'),
     ))
 
+# navbar Deslogado
+nav.register_element('no_login', Navbar(
+    View('Tamagotchi', '.index'),
+    View('Ranking', '.rank'),
+    ))
+
 
 # Our index-page just shows a quick explanation. Check out the template
 # "templates/index.html" documentation for more details.
+def UpdateTamagotchi(s,tamagotchi):
+
+    hungerRate = 5
+    healthRate = 5
+    happyRate = 5
+    deltaTime = (tamagotchi.last_update - datetime.now()).total_seconds()
+
+    hunger_lost= (hungerRate * random.uniform(0.8, 1.2))
+    tamagotchi.hunger = tamagotchi.hunger - hunger_lost
+    print("Vida perdida = ", tamagotchi.hunger)
+    #tamagotchi.health = tamagotchi.health - (healthRate ) * deltaTime
+    #tamagotchi.happy = tamagotchi.happy - (happyRate) * deltaTime
+
+    s.commit()
+
 
 def MyTamagotchis(id=None):
     s = sessionmaker(bind=engine)()
     user = s.query(User).filter(User.username.in_([session.get('username')])).first()
     if id:
-        query = s.query(Tamagotchi).filter(Tamagotchi.id.in_([id]) ).first() 
+        query = s.query(Tamagotchi).filter(Tamagotchi.id.in_([id])).first()
     else:
-        query = s.query(Tamagotchi).filter(Tamagotchi.user_id.in_([user.id]) )
+        query = s.query(Tamagotchi).filter(Tamagotchi.user_id.in_([user.id]))
+
+        for tamagotchi in query:
+            UpdateTamagotchi(s, tamagotchi)
     return query
 
 def AllTamagotchis():
@@ -63,16 +89,20 @@ def index():
     else:
         tama = MyTamagotchis().first()
         if tama:
-            return  redirect(url_for('.home',id=tama.id)) 
+            return redirect(url_for('.home', id=tama.id))
         else:
             return redirect(url_for('.home'))
 
 @frontend.route('/tamagotchi')
 @frontend.route('/tamagotchi/<id>')
 def home(id=None):
-    tama= MyTamagotchis(id)
-    return render_template('index.html', tamagotchis=MyTamagotchis(), tamagotchi=tama, now=datetime.now().time())
- 
+    if id:
+        tama= MyTamagotchis(id)
+        return render_template('index.html', tamagotchis=MyTamagotchis(), tamagotchi=tama, now=datetime.now().time())
+    else:
+        return render_template('welcome.html')
+
+
 @frontend.route('/cadastrar')
 def cadastro():
     return render_template('user_form.html')

@@ -5,10 +5,7 @@
  
  {% block content %}
    <div class="container">
-<!-- 
-        <img src="{{url_for('static', filename='imagens/char1.gif')}}">
-        <img src="{{url_for('static', filename='imagens/char2.gif')}}">
-        <img src="{{url_for('static', filename='imagens/char3.gif')}}"> -->
+
 
         {%- with messages = get_flashed_messages(with_categories=True) %}
             {%- if messages %}
@@ -31,7 +28,7 @@
                            style="
                                height: 500px;
                                background-color: aqua;
-                               background-image: url({{ url_for('static', filename='cenarios/cenario_'+tamagotchi.imagem+'.jpg') }});
+                               background-image: url({{ url_for('static', filename='cenarios/cenario_'+tamagotchi.name_pokemon +'.jpg') }});
                                background-size: 100%;
                                background-repeat: no-repeat;
                                    "
@@ -75,7 +72,7 @@
                             <div style="position: relative; margin-left: 50%; float: bottom;top: 60%">
                                 <img
                                         style="width: 15%; height: 15%"
-                                        src="{{url_for('static', filename='pokemons/'+tamagotchi.imagem+'1.gif')}}" >
+                                        src="{{url_for('static', filename='pokemons/'+tamagotchi.name_pokemon+'1.gif')}}" >
                             </div>
 
                         </div>
@@ -89,7 +86,7 @@
                 <div class="list-group-item">
                     <a href="/tamagotchi/{{tama.id}}">{{ tama.name }}</a>
                     
-                    <img src="{{url_for('static', filename='pokemons/'+tama.imagem+'1.gif')}}"  style=" width:30px; margin-rigth:0px" >
+                    <img src="{{url_for('static', filename='pokemons/'+tama.name_pokemon+'1.gif')}}"  style=" width:30px; margin-rigth:0px" >
                 </div>
                 {% endfor %}
                 </ul>
