@@ -9,3 +9,4 @@ tutorial.db
 *.iml
 *.pyc
 *.pyc
+*.db
