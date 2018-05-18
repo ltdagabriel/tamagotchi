@@ -235,4 +235,4 @@ def rank():
 
 def pegaCriadorDoTamagotchi(id):
     s = sessionmaker(bind=engine)()
-    return s.query(User).filter(User.id.in_([id])).first()
+    return s.query(User).filter(User.id.in_([id]))
