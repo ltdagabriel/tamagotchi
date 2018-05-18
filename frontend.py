@@ -49,13 +49,16 @@ def UpdateTamagotchi(s,tamagotchi):
     hungerRate = 5
     healthRate = 5
     happyRate = 5
-    deltaTime = (tamagotchi.last_update - datetime.now()).total_seconds()
-
-    hunger_lost= (hungerRate * random.uniform(0.8, 1.2))
+    deltaTime = (datetime.now() - tamagotchi.last_update).total_seconds()
+    tamagotchi.last_update = datetime.now()
+    hunger_lost = hungerRate * 0.1 * deltaTime
     tamagotchi.hunger = tamagotchi.hunger - hunger_lost
-    print("Vida perdida = ", tamagotchi.hunger)
-    #tamagotchi.health = tamagotchi.health - (healthRate ) * deltaTime
-    #tamagotchi.happy = tamagotchi.happy - (happyRate) * deltaTime
+    health_lost = healthRate * 0.1 * deltaTime
+    tamagotchi.health = tamagotchi.health - health_lost
+    happy_lost = happyRate * 0.1 * deltaTime
+    tamagotchi.happy = tamagotchi.happy - happy_lost
+
+    print("Actual life:", tamagotchi.health, " happy:", tamagotchi.happy, " hunger", tamagotchi.hunger)
 
     s.commit()
 
