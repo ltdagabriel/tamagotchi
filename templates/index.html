@@ -5,10 +5,7 @@
  
  {% block content %}
    <div class="container">
-<!-- 
-        <img src="{{url_for('static', filename='imagens/char1.gif')}}">
-        <img src="{{url_for('static', filename='imagens/char2.gif')}}">
-        <img src="{{url_for('static', filename='imagens/char3.gif')}}"> -->
+
 
         {%- with messages = get_flashed_messages(with_categories=True) %}
             {%- if messages %}
@@ -22,29 +19,64 @@
         <div class="row">
             <div class="col-sm-9 col-md-10">
                 {%- if tamagotchi %}
-                    <h3>Tamagotchi name: {{tamagotchi.name}}</h3>
+                    <h3>Tamagotchi name: {{tamagotchi.name}},  {{ now }}</h3>
+
                     <div class="row">
-                        <div class="col-sm-4">
-                            <h4 class="text-center"><strong>Vida</strong></h4>
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi.health}}%">
+                        <div
+                           class="col-sm-12 col-md-12 col-sm-12"
+
+                           style="
+                               height: 500px;
+                               background-color: aqua;
+                               background-image: url({{ url_for('static', filename='cenarios/cenario_'+tamagotchi.name_pokemon +'.jpg') }});
+                               background-size: 100%;
+                               background-repeat: no-repeat;
+                                   "
+                        >
+                        <div class="row container-fluid">
+                            <div class="col-sm-4" style="margin-top: 10px">
+                                <div class="col-sm-2">
+                                    <img style="width: 120%;float: left" src="{{url_for('static', filename='icones/coracao.gif')}}" >
+                                </div>
+                                <div class="col-sm-10">
+                                     <div class="progress">
+                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi.health}}%;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4" style="margin-top: 10px">
+                                <div class="col-sm-2">
+                                    <img style="width: 120%;float: left" src="{{url_for('static', filename='icones/smile.gif')}}" >
+                                </div>
+                                <div class="col-sm-10">
+                                     <div class="progress">
+                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi.happy}}%;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4" style="margin-top: 10px">
+                                <div class="col-sm-2">
+                                    <img style="width: 120%;float: left" src="{{url_for('static', filename='icones/pizza.gif')}}" >
+                                </div>
+                                <div class="col-sm-10">
+                                     <div class="progress">
+                                        <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi.hunger}}%;">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-4">
-                            <h4 class="text-center"><strong>Felicidade</strong></h4>
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi.happy}}%;">
-                                </div>
+
+                            <div style="position: relative; margin-left: 50%; float: bottom;top: 60%">
+                                <img
+                                        style="width: 15%; height: 15%"
+                                        src="{{url_for('static', filename='pokemons/'+tamagotchi.name_pokemon+'1.gif')}}" >
                             </div>
+
                         </div>
-                        <div class="col-sm-4">
-                            <h4 class="text-center"><strong>Fome</strong></h4>
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi.hunger}}%;">
-                                </div>
-                            </div>
-                        </div>
+
                     </div>
                 {%- endif %}
             </div>
@@ -54,7 +86,7 @@
                 <div class="list-group-item">
                     <a href="/tamagotchi/{{tama.id}}">{{ tama.name }}</a>
                     
-                    <img src="{{url_for('static', filename='pokemons/'+tama.imagem+'1.gif')}}"  style=" width:30px; margin-rigth:0px" >
+                    <img src="{{url_for('static', filename='pokemons/'+tama.name_pokemon+'1.gif')}}"  style=" width:30px; margin-rigth:0px" >
                 </div>
                 {% endfor %}
                 </ul>

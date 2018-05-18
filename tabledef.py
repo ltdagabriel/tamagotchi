@@ -30,7 +30,7 @@ class Tamagotchi(Base):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     name = Column(String)
-    imagem = Column(String)
+    name_pokemon = Column(String)
     birthday = Column(DateTime, default=datetime.utcnow)
     last_update = Column(DateTime, default=datetime.utcnow)
     state = Column(String, default='Saudavel')
@@ -42,7 +42,7 @@ class Tamagotchi(Base):
         """"""
         self.name = name
         self.user_id = user_id
-        self.imagem = imagem
+        self.name_pokemon = imagem
  
 
 
