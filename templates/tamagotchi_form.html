@@ -5,8 +5,11 @@
 
 {% block content %}
   <div class="container">
-    <embed height="60" type="audio/midi" width="144" src="{{ url_for('static', filename='illbegood.mp3')}}" volume="60" loop="false" autostart="true" />
-       {%- with messages = get_flashed_messages(with_categories=True) %}
+      <audio src="{{ url_for('static', filename='illbegood.mp3')}}" preload="auto" autoplay loop>
+        <p>Seu nevegador não suporta o elemento audio.</p>
+      </audio>
+
+      {%- with messages = get_flashed_messages(with_categories=True) %}
            {%- if messages %}
                <div class="row">
                    <div class="col-md-12">
