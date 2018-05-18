@@ -107,7 +107,7 @@ def AllTamagotchis():
     s = sessionmaker(bind=engine)()
     todos = s.query(Tamagotchi).all()
 
-    return todos
+    return sorted(todos, key= lambda tama: (tama.last_update - tama.birthday).total_seconds(), reverse= True)
 
 @frontend.route('/tamagotchiform')
 def novotamagotchi():
@@ -196,4 +196,8 @@ def cadastrar():
 
 @frontend.route('/ranking')
 def rank():
-    return render_template('rank.html', tamagotchis=AllTamagotchis())
+    return render_template('rank.html', tamagotchis=AllTamagotchis(), pegaCriadorDoTamagotchi=pegaCriadorDoTamagotchi)
+
+def pegaCriadorDoTamagotchi(id):
+    s = sessionmaker(bind=engine)()
+    return s.query(User).filter(User.id.in_([id])).first()
