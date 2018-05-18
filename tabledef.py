@@ -31,8 +31,8 @@ class Tamagotchi(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     name = Column(String)
     name_pokemon = Column(String)
-    birthday = Column(DateTime, default=datetime.utcnow)
-    last_update = Column(DateTime, default=datetime.utcnow)
+    birthday = Column(DateTime, default=datetime.now())
+    last_update = Column(DateTime, default=datetime.now())
     state = Column(String, default='Saudavel')
     hunger = Column(Float, default=100.0) 
     happy = Column(Float, default=100.0) 
@@ -42,6 +42,8 @@ class Tamagotchi(Base):
         """"""
         self.name = name
         self.user_id = user_id
+        self.last_update = datetime.now()
+        self.birthday = datetime.now()
         self.name_pokemon = imagem
  
 

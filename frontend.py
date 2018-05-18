@@ -5,7 +5,7 @@
 # You can find out more about blueprints at
 # http://flask.pocoo.org/docs/blueprints/
 
-from flask import Flask, flash, redirect, url_for, render_template, request, session, abort, redirect
+from flask import flash, url_for, request, session, redirect
 
 from sqlalchemy.orm import sessionmaker
 from tabledef import *
@@ -13,11 +13,9 @@ engine = create_engine('sqlite:///tutorial.db', echo=True)
 
 from flask import Blueprint, render_template
 from flask_nav.elements import Navbar, View
-from markupsafe import escape
-import os
 from nav import nav
 from datetime import datetime
-import random
+
 frontend = Blueprint('frontend', __name__)
 
 
@@ -50,15 +48,45 @@ def UpdateTamagotchi(s,tamagotchi):
     healthRate = 5
     happyRate = 5
     deltaTime = (datetime.now() - tamagotchi.last_update).total_seconds()
-    tamagotchi.last_update = datetime.now()
-    hunger_lost = hungerRate * 0.1 * deltaTime
-    tamagotchi.hunger = tamagotchi.hunger - hunger_lost
-    health_lost = healthRate * 0.1 * deltaTime
-    tamagotchi.health = tamagotchi.health - health_lost
-    happy_lost = happyRate * 0.1 * deltaTime
-    tamagotchi.happy = tamagotchi.happy - happy_lost
 
-    print("Actual life:", tamagotchi.health, " happy:", tamagotchi.happy, " hunger", tamagotchi.hunger)
+    tamagotchi.last_update = datetime.now()
+
+    # atualiza estados
+    if (tamagotchi.happy < 25):
+        tamagotchi.state = 'Triste'
+
+    elif (tamagotchi.health < 25):
+        tamagotchi.state = 'Doente'
+
+    elif (tamagotchi.hunger < 60):
+        tamagotchi.state = 'Faminto'
+
+    elif (tamagotchi.happy <= 0 or tamagotchi.health <= 0 or tamagotchi.hunger <= 0):
+        tamagotchi.state = 'Morto'
+
+    if (tamagotchi.state == 'Saudavel'):
+        hunger_lost = hungerRate * 0.01 * deltaTime
+        health_lost = healthRate * 0.01 * deltaTime
+        happy_lost = happyRate * 0.01 * deltaTime
+    elif (tamagotchi.state == 'Doente'):
+        hunger_lost = hungerRate * 0.03 * deltaTime
+        health_lost = healthRate * 0.03 * deltaTime
+        happy_lost = happyRate * 0.03 * deltaTime
+    elif (tamagotchi.state == 'Faminto'):
+        hunger_lost = hungerRate * 0.02 * deltaTime
+        health_lost = healthRate * 0.02 * deltaTime
+        happy_lost = happyRate * 0.02 * deltaTime
+    elif (tamagotchi.state == 'Triste'):
+        hunger_lost = hungerRate * 0.05 * deltaTime
+        health_lost = healthRate * 0.05 * deltaTime
+        happy_lost = happyRate * 0.05 * deltaTime
+
+
+
+    tamagotchi.hunger = tamagotchi.hunger - hunger_lost
+    tamagotchi.happy = tamagotchi.happy - happy_lost
+    tamagotchi.health = tamagotchi.health - health_lost
+
 
     s.commit()
 
