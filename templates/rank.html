@@ -5,6 +5,18 @@
 <!-- href="/tamagotchi/{{tama.id}}" -->
 
 {% block content %}
+    <div class="container">
+        {%- with messages = get_flashed_messages(with_categories=True) %}
+           {%- if messages %}
+               <div class="row">
+                    <div class="alert alert-warning alert-dismissible" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      <strong>Warning!</strong>{{messages}}
+                    </div>
+               </div>
+           {%- endif %}
+       {%- endwith %}
+
             <div class="col-sm-12 col-md-12">
                 <ul class="list-group text-center">
                 {% for tama in tamagotchis %}
@@ -12,10 +24,12 @@
                     <p>Nome:{{ tama.name }}</p>
                     <p>Idade: {{  tama.last_update - tama.birthday}}</p>
                     <p>Criador: {{pegaCriadorDoTamagotchi(tama.id).username}}</p>
-                    
+
                     <img src="{{url_for('static', filename='pokemons/'+tama.name_pokemon+'1.gif')}}"  style=" width:30px; margin-rigth:0px" >
                 </div>
                 {% endfor %}
                 </ul>
             </div>
+    </div>
+
 {%- endblock %}

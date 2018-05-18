@@ -10,13 +10,14 @@
       </audio>
 
       {%- with messages = get_flashed_messages(with_categories=True) %}
-           {%- if messages %}
+           {%- for category, message in messages %}
                <div class="row">
-                   <div class="col-md-12">
-                       {{utils.flashed_messages(messages)}}
-                   </div>
+                    <div class="alert alert-warning alert-dismissible" role="alert">
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      <strong>Warning! </strong>{{message}}
+                    </div>
                </div>
-           {%- endif %}
+           {%- endfor %}
        {%- endwith %}
        <form action="/novotamagotchi" method="post">
             <div class="form-group">
@@ -26,7 +27,7 @@
               <!-- Opcoes de Tamagotchi -->
                 <div class="radio">
                 <label class="radio-inline">
-                    <input type="radio" name="poke" id="sqr" value="sqr"> 
+                    <input type="radio" name="poke" id="sqr" value="sqr" checked>
                     <img src="{{url_for('static', filename='pokemons/sqr1.gif')}}">
                 </label>
                 <label class="radio-inline">

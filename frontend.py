@@ -106,7 +106,8 @@ def MyTamagotchis(id=None):
 def AllTamagotchis():
     s = sessionmaker(bind=engine)()
     todos = s.query(Tamagotchi).all()
-
+    for tamagotchi in todos:
+        print("\n------------", UpdateTamagotchi(s, tamagotchi), "--------------\n")
     return sorted(todos, key= lambda tama: (tama.last_update - tama.birthday).total_seconds(), reverse= True)
 
 @frontend.route('/tamagotchiform')
@@ -197,18 +198,21 @@ def do_novo_tamagotchi():
  
     POST_NOME = str(request.form['nome'])
     IMAGEM = str(request.form['poke'])
-    Session = sessionmaker(bind=engine)
-    s = Session()
-    # print()
-    user = s.query(User).filter(User.username.in_([session.get('username')])).first()
-    tamago = Tamagotchi(POST_NOME, user.id, IMAGEM)
+    if POST_NOME == '':
+        flash("De um nome ao Tamagotchi")
+        return redirect(url_for('.novotamagotchi'))
+    else:
+        Session = sessionmaker(bind=engine)
+        s = Session()
+        user = s.query(User).filter(User.username.in_([session.get('username')])).first()
+        tamago = Tamagotchi(POST_NOME, user.id, IMAGEM)
 
-    s.add(tamago)
+        s.add(tamago)
 
-    s.commit()
+        s.commit()
 
-    return  redirect('/')
- 
+        return redirect(url_for('.index'))
+
 
 
 @frontend.route('/cadastrar/novo', methods=['POST'])
