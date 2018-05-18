@@ -129,7 +129,7 @@ def index():
 def home(id=None):
     if id:
         tama= MyTamagotchis(id)
-        return render_template('index.html', tamagotchis=MyTamagotchis(), tamagotchi=tama, now=datetime.now().time())
+        return render_template('index.html', tamagotchis=MyTamagotchis(), tamagotchi=tama, now=(datetime.now()- tama.birthday) )
     else:
         return render_template('welcome.html')
 

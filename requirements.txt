@@ -1,5 +1,5 @@
 cherrypy
-flask
+flask==1.0.2
 paste
 flask_bootstrap
 flask_appconfig
@@ -8,3 +8,4 @@ flask-login
 flask-SqlAlchemy
 flask-debug
 flask-wtf
+flask==1.0.2
