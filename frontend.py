@@ -46,9 +46,9 @@ def UpdateTamagotchi(s,tamagotchi):
     if ( tamagotchi.state == 'Morto'):
         return
 
-    hungerRate = 5
-    healthRate = 5
-    happyRate = 5
+    hungerRate = 0.01
+    healthRate = 0.01
+    happyRate = 0.01
     deltaTime = (datetime.now() - tamagotchi.last_update).total_seconds()
 
     tamagotchi.last_update = datetime.now()
@@ -67,27 +67,25 @@ def UpdateTamagotchi(s,tamagotchi):
         tamagotchi.state = 'Morto'
 
     if (tamagotchi.state == 'Saudavel'):
-        hunger_lost = hungerRate * 0.01 * deltaTime
-        health_lost = healthRate * 0.01 * deltaTime
-        happy_lost = happyRate * 0.01 * deltaTime
+        hungerRate = 0.01
+        healthRate = 0.01
+        happyRate = 0.01
     elif (tamagotchi.state == 'Doente'):
-        hunger_lost = hungerRate * 0.03 * deltaTime
-        health_lost = healthRate * 0.03 * deltaTime
-        happy_lost = happyRate * 0.03 * deltaTime
+        hungerRate = 0.005
+        healthRate = 0.06
+        happyRate = 0.03
     elif (tamagotchi.state == 'Faminto'):
-        hunger_lost = hungerRate * 0.02 * deltaTime
-        health_lost = healthRate * 0.02 * deltaTime
-        happy_lost = happyRate * 0.02 * deltaTime
+        hungerRate = 0.05
+        healthRate = 0.02
+        happyRate = 0.03
     elif (tamagotchi.state == 'Triste'):
-        hunger_lost = hungerRate * 0.05 * deltaTime
-        health_lost = healthRate * 0.05 * deltaTime
-        happy_lost = happyRate * 0.05 * deltaTime
+        hungerRate = 0.05
+        healthRate = 0.03
+        happyRate = 0.07
 
-
-
-    tamagotchi.hunger = tamagotchi.hunger - hunger_lost
-    tamagotchi.happy = tamagotchi.happy - happy_lost
-    tamagotchi.health = tamagotchi.health - health_lost
+    tamagotchi.hunger = tamagotchi.hunger - hungerRate * deltaTime
+    tamagotchi.happy = tamagotchi.happy - happyRate * deltaTime
+    tamagotchi.health = tamagotchi.health - healthRate * deltaTime
 
 
     s.commit()
