@@ -99,7 +99,7 @@
                     </div>
                     <!-- Button trigger modal -->
                     <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-                      Launch demo modal
+                      Loja
                     </button>
                     
                     <!-- Modal -->
@@ -111,10 +111,17 @@
                             <h4 class="modal-title" id="myModalLabel">Loja</h4>
                           </div>
                           <div class="modal-body">
-                            
+                            <ul class="list-group text-center">
+                                <p>Pikachu</p>
+                                <img src="{{url_for('static', filename='pokemons/pikachu.gif')}}"  style=" width:100px; margin-rigth:0px" >
+                            </ul>
+                            <ul class="list-group text-center">
+                                <p>Dragonite</p>
+                                <img src="{{url_for('static', filename='pokemons/dragonite.gif')}}"  style=" width:100px; margin-rigth:0px" >
+                            </ul>
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
                             <button type="button" class="btn btn-primary">Comprar</button>
                           </div>
                         </div>
