@@ -38,11 +38,16 @@ function listMake(tamagotchi){
     for (let i = 0; i < tamagotchi.length; i++){
         let value= tamagotchi[i]
         if( value.state != 'Morto'){
-            let arr="<div class='list-group-item'>"
-            arr+="<a href='/tamagotchi/"+value.id+"'>"
-            arr+=value.name+"</a>"
-            arr+="<img src='/static/pokemons/"+value.pokemon+"1.gif')}}'  style=' width:30px; margin-rigth:0px' ></div>"
-            test+=arr
+            test+=
+            "<div class='list-group-item'>"+
+                "<a href='/tamagotchi/"+value.id+"'>"+
+                value.name+
+                "</a>"+
+                "<img"+
+                    " src='/static/pokemons/"+value.pokemon+"1.gif')}}' "+
+                    " style=' width:30px; margin-rigth:0px'"+
+                " />"+
+            "</div>"
         }
     }
     return test
