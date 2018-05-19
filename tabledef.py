@@ -52,6 +52,7 @@ class Pokemon(Base):
 
     name = Column(String, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    cenario = Column(String, default='default')
 
     
     def __init__(self, name, user_id):
