@@ -47,6 +47,9 @@ function listMake(tamagotchi){
                     " src='/static/pokemons/"+value.pokemon+"1.gif')}}' "+
                     " style=' width:30px; margin-rigth:0px'"+
                 " />"+
+                "<button >"+
+                "<span aria-hidden='true'>&times;</span>"+
+                "</button>"+
             "</div>"
         }
     }
