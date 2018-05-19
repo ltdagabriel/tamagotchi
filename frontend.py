@@ -253,12 +253,8 @@ def pegaCriadorDoTamagotchi(id):
 
 def verificaNome(nome):
     s = sessionmaker(bind=engine)()
-    print(nome)
-    # temp = s.query(Tamagotchi).filter(Tamagotchi.name == nome
 
     teste = s.query(Tamagotchi).filter(Tamagotchi.name.in_([nome])).first()
-    print("O QUE EH ISSO: ", teste)
-
 
     if teste:
         return True
