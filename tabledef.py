@@ -45,6 +45,19 @@ class Tamagotchi(Base):
         self.last_update = datetime.now()
         self.birthday = datetime.now()
         self.name_pokemon = imagem
+
+class Pokemon(Base):
+    """"""
+    __tablename__ = "pokemons"
+
+    name = Column(String, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+
+    
+    def __init__(self, name, user_id):
+        """"""
+        self.name = name
+        self.user_id = user_id
  
 
 
