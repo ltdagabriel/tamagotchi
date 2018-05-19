@@ -250,7 +250,16 @@ def cadastrar():
 
     s.add(user)
 
+    Pokemon1 = Pokemon("bul1", user.id)
+    s.add(Pokemon1)
+    Pokemon2 = Pokemon("char1", user.id)
+    s.add(Pokemon2)    
+    Pokemon3 = Pokemon("sqr1", user.id)
+    s.add(Pokemon3)
+
     s.commit()
+
+
     return redirect(url_for('.index'))
 
 @frontend.route('/ranking')
