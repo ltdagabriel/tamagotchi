@@ -113,16 +113,22 @@
                           <div class="modal-body">
                             <ul class="list-group text-center">
                                 <p>Pikachu</p>
-                                <img src="{{url_for('static', filename='pokemons/pikachu.gif')}}"  style=" width:100px; margin-rigth:0px" >
+                                <label class="radio-inline">
+                                     <input type="radio" name="poke" id="pikachu" value="pikachu" checked>
+                                     <img src="{{url_for('static', filename='pokemons/pikachu.gif')}}">
+                                </label>
                             </ul>
                             <ul class="list-group text-center">
                                 <p>Dragonite</p>
-                                <img src="{{url_for('static', filename='pokemons/dragonite.gif')}}"  style=" width:100px; margin-rigth:0px" >
+                                <label class="radio-inline">
+                                     <input type="radio" name="poke" id="dragonite" value="dragonite" checked>
+                                     <img src="{{url_for('static', filename='pokemons/dragonite.gif')}}">
+                                </label>
                             </ul>
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-                            <button type="button" class="btn btn-primary">Comprar</button>
+                            <button type="submit" onclick="location.href='/'" class="btn btn-primary">Comprar</button>
                           </div>
                         </div>
                       </div>

@@ -288,3 +288,16 @@ def deletaBixo():
     s.delete(tama)
     s.commit()
     return redirect(url_for('.index'))
+
+@frontend.route('/tamagotchi/<id>', methods=['POST'])
+def compraBixo():
+    s = sessionmaker(bind=engine)()
+    IMAGEM = str(request.form['poke'])
+    # Pokemon1 = Pokemon(IMAGEM, user.id)
+    # s.add(Pokemon1)
+    user = s.query(User).filter(User.username.in_([session.get('username')])).first()
+    tamago = Tamagotchi(POST_NOME, user.id, IMAGEM)
+
+    s.add(tamago)
+
+    s.commit()
