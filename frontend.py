@@ -260,3 +260,11 @@ def verificaNome(nome):
         return True
     else:
         return False
+
+@frontend.route('/tamagotchi/<id>/del')
+def deletaBixo(id):
+    s = sessionmaker(bind=engine)()
+    tama = s.query(Tamagotchi).filter(Tamagotchi.id.in_([id])).first()
+    s.delete(tama)
+    s.commit()
+    return redirect(url_for('.home'))
