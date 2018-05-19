@@ -6,7 +6,9 @@
  
  {% block content %}
    <div class="container">
-
+    <audio id="music" src="{{ url_for('static', filename='songs/Pokemon-Tema.mp3')}}" preload="auto" autoplay loop>
+        <p>Seu nevegador não suporta o elemento audio.</p>
+    </audio>
         {%- with messages = get_flashed_messages(with_categories=True) %}
             {%- if messages %}
                 <div class="row">

@@ -85,6 +85,7 @@ def UpdateTamagotchi(s,tamagotchi):
 
 
 def MyTamagotchis(id=None):
+    AllTamagotchis()
     s = sessionmaker(bind=engine)()
     user = s.query(User).filter(User.username.in_([session.get('username')])).first()
     if id:

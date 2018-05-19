@@ -12,6 +12,9 @@ function loop_load(){
                 Object.keys(response).forEach((value)=>{
                     insert_into_value(value,response[value])
                 });
+                $("#health").attr("style", "width: "+ response['health'].toPrecision(3)+"%;");
+                $("#happy").attr("style", "width: "+ response['happy'].toPrecision(3)+"%;");
+                $("#hunger").attr("style", "width: "+ response['hunger'].toPrecision(3)+"%;");
                 setTimeout(loop_load, 1000);
             },
             error: function(error) {
@@ -31,12 +34,12 @@ function insert_into_value(to,value){
 }
 function seconds2time (time) {
     let seconds= parseInt(time,10) 
-    let day = Math.floor(time/(60*60*24))
-    seconds = time - day*(60*60*24)
-    let hours = Math.floor(time/(60*60))
-    seconds = time - hours*(60*60)
-    let minutes = Math.floor(time/(60))
-    seconds = time - minutes*(60) 
+    let day = Math.floor(seconds/(60*60*24))
+    seconds = seconds - day*(60*60*24)
+    let hours = Math.floor(seconds/(60*60))
+    seconds = seconds - hours*(60*60)
+    let minutes = Math.floor(seconds/(60))
+    seconds = seconds - minutes*(60) 
 
     let life_time= "";
     if(day){

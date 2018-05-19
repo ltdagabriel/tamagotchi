@@ -5,10 +5,6 @@
 
 {% block content %}
   <div class="container">
-      <audio src="{{ url_for('static', filename='illbegood.mp3')}}" preload="auto" autoplay loop>
-        <p>Seu nevegador não suporta o elemento audio.</p>
-      </audio>
-
       {%- with messages = get_flashed_messages(with_categories=True) %}
            {%- for category, message in messages %}
                <div class="row">
