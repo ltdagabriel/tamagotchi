@@ -3,3 +3,4 @@
 *.iml
 *.pyc
 *.db
+*.db-journal
