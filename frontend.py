@@ -211,6 +211,9 @@ def do_novo_tamagotchi():
     if POST_NOME == '':
         flash("De um nome ao Tamagotchi")
         return redirect(url_for('.novotamagotchi'))
+    if verificaNome(POST_NOME):
+        flash("Já existe um tamagotchi com este nome")
+        return redirect(url_for('.novotamagotchi'))
     else:
         Session = sessionmaker(bind=engine)
         s = Session()
@@ -246,3 +249,17 @@ def rank():
 def pegaCriadorDoTamagotchi(id):
     s = sessionmaker(bind=engine)()
     return s.query(User).filter(User.id.in_([id]))
+
+def verificaNome(nome):
+    s = sessionmaker(bind=engine)()
+    print(nome)
+    # temp = s.query(Tamagotchi).filter(Tamagotchi.name == nome
+
+    teste = s.query(Tamagotchi).filter(Tamagotchi.name.in_([nome])).first()
+    print("O QUE EH ISSO: ", teste)
+
+
+    if teste:
+        return True
+    else:
+        return False
