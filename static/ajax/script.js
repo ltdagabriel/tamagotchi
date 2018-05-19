@@ -12,6 +12,7 @@ function loop_load(){
                 Object.keys(response).forEach((value)=>{
                     insert_into_value(value,response[value])
                 });
+                $("#list").html(listMake(response['list']))
                 $("#health").attr("style", "width: "+ response['health'].toPrecision(3)+"%;");
                 $("#happy").attr("style", "width: "+ response['happy'].toPrecision(3)+"%;");
                 $("#hunger").attr("style", "width: "+ response['hunger'].toPrecision(3)+"%;");
@@ -32,6 +33,21 @@ function insert_into_value(to,value){
     $("#"+to).html(value);
     }
 }
+function listMake(tamagotchi){
+    let test="";
+    for (let i = 0; i < tamagotchi.length; i++){
+        let value= tamagotchi[i]
+        if( value.state != 'Morto'){
+            let arr="<div class='list-group-item'>"
+            arr+="<a href='/tamagotchi/"+value.id+"'>"
+            arr+=value.name+"</a>"
+            arr+="<img src='/static/pokemons/"+value.pokemon+"1.gif')}}'  style=' width:30px; margin-rigth:0px' ></div>"
+            test+=arr
+        }
+    }
+    return test
+}
+
 function seconds2time (time) {
     let seconds= parseInt(time,10) 
     let day = Math.floor(seconds/(60*60*24))

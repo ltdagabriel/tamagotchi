@@ -85,16 +85,12 @@ def UpdateTamagotchi(s,tamagotchi):
 
 
 def MyTamagotchis(id=None):
-    AllTamagotchis()
     s = sessionmaker(bind=engine)()
     user = s.query(User).filter(User.username.in_([session.get('username')])).first()
     if id:
         query = s.query(Tamagotchi).filter(Tamagotchi.id.in_([id]), Tamagotchi.user_id.in_([user.id])).first()
     else:
         query = s.query(Tamagotchi).filter(Tamagotchi.user_id.in_([user.id]))
-
-        for tamagotchi in query:
-            print("\n------------", UpdateTamagotchi(s, tamagotchi), "--------------\n")
     return query
 
 def AllTamagotchis():
@@ -107,15 +103,18 @@ def AllTamagotchis():
 
 @frontend.route('/load', methods=['POST'])
 def load_tamagotchi():
+    AllTamagotchis()
     id = request.form['id']
     tamagotchi = MyTamagotchis(int(id)) 
+    tamagotchis = MyTamagotchis()
     return jsonify( 
         {
             'name': tamagotchi.name,
             'happy': tamagotchi.happy,
             'hunger': tamagotchi.hunger,
             'health': tamagotchi.health,
-            'age': (tamagotchi.last_update - tamagotchi.birthday).total_seconds()
+            'age': (tamagotchi.last_update - tamagotchi.birthday).total_seconds(),
+            'list': map( lambda tama: ({'id': tama.id,'name': tama.name, 'state': tama.state, 'pokemon': tama.name_pokemon}) ,tamagotchis)
         })
 
 
