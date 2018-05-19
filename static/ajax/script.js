@@ -2,16 +2,18 @@
 $(document).ready(loop_load())
 
 function loop_load(){
-    $.ajax(
-        {
-            dataType: 'json',
-            url: '/load',
+    
+        $.ajax(
+            {
+                dataType: 'json',
+                url: '/load',
             data: jQuery.param({'id':$('#id_tamagotchi').text()}),
             type: 'POST',
             success: function(response) {
                 Object.keys(response).forEach((value)=>{
                     insert_into_value(value,response[value])
                 });
+                $("#imagem_pokemon").html("<img style='width:"+20*Number(response['pokemon'].slice(-1))+"%;' src='/static/pokemons/"+response['pokemon'] +".gif' />");
                 $("#list").html(listMake(response['list']))
                 $("#health").attr("style", "width: "+ response['health'].toPrecision(3)+"%;");
                 $("#happy").attr("style", "width: "+ response['happy'].toPrecision(3)+"%;");
@@ -19,11 +21,10 @@ function loop_load(){
                 setTimeout(loop_load, 1000);
             },
             error: function(error) {
-                console.log(error);
                 setTimeout(loop_load, 1000);
             }
-        }
-    );
+        });
+    
 }
 function insert_into_value(to,value){
     if(to == 'age'){

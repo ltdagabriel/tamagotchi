@@ -128,6 +128,8 @@ def load_tamagotchi():
 
 @frontend.route('/tamagotchiform')
 def novotamagotchi():
+    s = sessionmaker(bind=engine)()
+    s.query().filter(Tamagotchi.id.in_([id]), Tamagotchi.user_id.in_([user.id]))
     return render_template('tamagotchi_form.html')
 
 
