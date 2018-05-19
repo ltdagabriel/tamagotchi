@@ -41,19 +41,35 @@ function listMake(tamagotchi){
             test+=
             "<div class='list-group-item'>"+
                 "<a href='/tamagotchi/"+value.id+"'>"+
-                value.name+
+                    value.name+
                 "</a>"+
                 "<img"+
-                    " src='/static/pokemons/"+value.pokemon+"1.gif')}}' "+
+                    " src='/static/pokemons/"+value.pokemon+".gif')}}' "+
                     " style=' width:30px; margin-rigth:0px'"+
                 " />"+
-                "<button >"+
-                "<span aria-hidden='true'>&times;</span>"+
+                "<button onClick='deleteTamagotchi("+value.id+")' class='close'>"+
+                    "<span aria-hidden='true'>&times;</span>"+
                 "</button>"+
             "</div>"
         }
     }
     return test
+}
+function deleteTamagotchi(id){
+    $.ajax(
+        {
+            dataType: 'json',
+            url: '/tamagotchi/del',
+            data: jQuery.param({'id': id}),
+            type: 'POST',
+            success: function(response) {
+                console.log(response)
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        }
+    );
 }
 
 function seconds2time (time) {

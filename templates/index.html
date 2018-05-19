@@ -76,7 +76,7 @@
                                 <div id="url_pokemon" class="collapse">{{ url_for('static', filename='pokemons/') }}</div>
                                 <img
                                         style="width: 15%; height: 15%"
-                                        src="{{url_for('static', filename='pokemons/'+tamagotchi.name_pokemon+'1.gif')}}" >
+                                        src="{{url_for('static', filename='pokemons/'+tamagotchi.name_pokemon+'.gif')}}" >
                             </div>
 
                             <!-- Split dropup button -->
@@ -106,7 +106,7 @@
                 <div class="list-group-item">
                     <a href="/tamagotchi/{{tama.id}}">{{ tama.name }}</a>
                     
-                    <img src="{{url_for('static', filename='pokemons/'+tama.name_pokemon+'1.gif')}}"  style=" width:30px; margin-rigth:0px" >
+                    <img src="{{url_for('static', filename='pokemons/'+tama.name_pokemon+'.gif')}}"  style=" width:30px; margin-rigth:0px" >
                 </div>
                 {% endfor %}
                 </ul>

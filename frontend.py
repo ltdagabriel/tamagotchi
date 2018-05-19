@@ -46,10 +46,17 @@ def UpdateTamagotchi(s,tamagotchi):
     if ( tamagotchi.state == 'Morto'):
         return "It's Dead"
 
+
     hungerRate = 0.01
     healthRate = 0.01
     happyRate = 0.01
     deltaTime = (datetime.now() - tamagotchi.last_update).total_seconds()
+    if( 30*60 < int(deltaTime) < 60*60):
+        tamagotchi.name_pokemon= tamagotchi.name_pokemon[0:-1]+'2'
+    
+    elif( 60*60 < int(deltaTime)):
+        tamagotchi.name_pokemon= tamagotchi.name_pokemon[0:-1]+'3'
+    
 
     tamagotchi.last_update = datetime.now()
     if (tamagotchi.happy <= 0 or tamagotchi.health <= 0 or tamagotchi.hunger <= 0):
@@ -113,6 +120,7 @@ def load_tamagotchi():
             'happy': tamagotchi.happy,
             'hunger': tamagotchi.hunger,
             'health': tamagotchi.health,
+            'pokemon': tamagotchi.name_pokemon,
             'age': (tamagotchi.last_update - tamagotchi.birthday).total_seconds(),
             'list': map( lambda tama: ({'id': tama.id,'name': tama.name, 'state': tama.state, 'pokemon': tama.name_pokemon}) ,tamagotchis)
         })
@@ -261,10 +269,11 @@ def verificaNome(nome):
     else:
         return False
 
-@frontend.route('/tamagotchi/<id>/del')
-def deletaBixo(id):
+@frontend.route('/tamagotchi/del', methods=['POST'])
+def deletaBixo():
     s = sessionmaker(bind=engine)()
-    tama = s.query(Tamagotchi).filter(Tamagotchi.id.in_([id])).first()
+    id = request.form['id']
+    tama = s.query(Tamagotchi).filter(Tamagotchi.id.in_([int(id)])).first()
     s.delete(tama)
     s.commit()
-    return redirect(url_for('.home'))
+    return redirect(url_for('.index'))
