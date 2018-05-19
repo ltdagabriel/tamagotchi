@@ -211,8 +211,9 @@ def do_novo_tamagotchi():
     if POST_NOME == '':
         flash("De um nome ao Tamagotchi")
         return redirect(url_for('.novotamagotchi'))
+
     if verificaNome(POST_NOME):
-        flash("Já existe um tamagotchi com este nome")
+        flash("Ja existe um tamagotchi com este nome")
         return redirect(url_for('.novotamagotchi'))
     else:
         Session = sessionmaker(bind=engine)
