@@ -24,16 +24,16 @@
                     <div class="col-sm-6 text-uppercase text-left"><h3 id="name">{{tamagotchi.name}}</h3></div>
                     <div class="col-sm-6 text-right"><h3 id="age">{{ tamagotchi.last_update - tamagotchi.birthday }}</h3></div>
 
-                    <div class="row">
+                    <div class="row" ondragover="allowDrop(event)">
                         <div
-                           class="col-sm-12 col-md-12 col-sm-12"
+                           class="col-sm-12 col-md-12 col-sm-12" id="cenario"
 
                            style="
                                height: 500px;
                                background-color: aqua;
-                               background-image: url({{ url_for('static', filename='cenarios/cenario_'+tamagotchi.name_pokemon +'.jpg') }});
                                background-size: 100%;
                                background-repeat: no-repeat;
+                               background-image: url({{ url_for('static', filename='cenarios/default.jpg') }});
                                    "
                         >
                             <div class="row container-fluid">
@@ -71,31 +71,31 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-sm-12" style="height:350px"></div>
+                            <div class="col-sm-12" style="height:350px">
+                            <div class="col-sm-8" style="height:300px"></div>
+                            <div class="col-sm-2" style="height:300px"></div>
+                            <div class="col-sm-2">
+                                <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="health_10" ondragstart="drag(event)"  src="{{url_for('static', filename='icones/seringa.png')}}" draggable="true" / >
+                            </div>
+                            <div class="col-sm-2">
+                                <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="hunger_10" ondragstart="drag(event)"  src="{{url_for('static', filename='icones/maca.png')}}" draggable="true" / >
+                            </div>
+                            <div class="col-sm-2">
+                                <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="happy_10" ondragstart="drag(event)"  src="{{url_for('static', filename='icones/bola.png')}}" draggable="true" / >
+                            </div>
+                            </div>
                             <div class="col-sm-4">
                                 
                             </div>
-                            <div id="imagem_pokemon" class="col-sm-4 text-center">
+                            <div id="imagem_pokemon" ondrop="drop(event,{{ tamagotchi.id }})" class="col-sm-4 text-center" >
                                 <img
+                                        onmouseover="bigImg(this)" onmouseout="normalImg(this)"
                                         style="width: 15%; height: 15%"
                                         src="{{url_for('static', filename='pokemons/'+tamagotchi.name_pokemon+'.gif')}}" >
                             </div>
                             <div class="col-sm-12">
                                 <div class="col-sm-4">
-                                        <div class="dropup" style="float: bottom; top:65%;">
-                                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                Ações
-                                                <span class="caret"></span>
-                                            </button>
-                              
-                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                              <li><a href="/tamagotchi/{{ tamagotchi.id }}/health/10">Aplicar Curativo</a></li>
-                                              <li role="separator" class="divider">
-                                              <li><a href="/tamagotchi/{{ tamagotchi.id }}/happy/10">Brincar</a></li>
-                                              <li role="separator" class="divider">
-                                              <li><a href="/tamagotchi/{{ tamagotchi.id }}/hunger/10">Alimentar</a></li>
-                                            </ul>
-                                        </div>
+                                        
                                 </div>
                                 <div class="col-sm-4"></div>
                                 <div class="col-sm-4">

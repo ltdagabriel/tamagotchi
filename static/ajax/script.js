@@ -31,12 +31,20 @@ function loop_load(){
                 }
 
                 
-                $("#imagem_pokemon").html("<img style='width:"+width+";' src='/static/pokemons/"+response['pokemon'].name +".gif' />");
+                $("#imagem_pokemon").html(
+                    "<img style='width:"+width+";' "+
+                    "onmouseover='bigImg(this)' onmouseout='normalImg(this)'"+
+                    "src='/static/pokemons/"+response['pokemon'].name +".gif' />");
                 $("#list").html(listMake(response['list']))
                 $("#health").attr("style", "width: "+ response['health'].toPrecision(3)+"%;");
+                $("#cenario").attr("style", 
+                        "height: 500px;"+
+                        "background-size: 100%;"+
+                        "background-repeat: no-repeat;"+
+                        "background-image: url('/static/cenarios/"+response['pokemon'].cenario+".jpg');");
                 $("#happy").attr("style", "width: "+ response['happy'].toPrecision(3)+"%;");
                 $("#hunger").attr("style", "width: "+ response['hunger'].toPrecision(3)+"%;");
-                setTimeout(loop_load, 1000);
+                 setTimeout(loop_load, 1000);
             },
             error: function(error) {
                 setTimeout(loop_load, 1000);
@@ -63,8 +71,9 @@ function listMake(tamagotchi){
                     value.name+
                 "</a>"+
                 "<img"+
+                    " onmouseover='bigImg(this)'' onmouseout='normalImg(this)'"+
                     " src='/static/pokemons/"+value.pokemon+".gif')}}' "+
-                    " style=' width:30px; margin-rigth:0px'"+
+                    " style=' width:32px; margin-rigth:0px'"+
                 " />"+
                 "<button onClick='deleteTamagotchi("+value.id+")' class='close'>"+
                     "<span aria-hidden='true'>&times;</span>"+
@@ -90,6 +99,12 @@ function deleteTamagotchi(id){
         }
     );
 }
+function bigImg(x) {
+    x.style.width = "64px";
+}
+function normalImg(x) {
+    x.style.width = "32px";
+}
 function allowDrop(ev) {
     ev.preventDefault();
 }
@@ -98,9 +113,15 @@ function drag(ev) {
     ev.dataTransfer.setData("text", ev.target.id);
 }
 
-function drop(ev) {
+function drop(ev, id) {
     ev.preventDefault();
-    alert(ev.dataTransfer.getData("text"))
+    let data = ev.dataTransfer.getData("text")
+    let i= data.indexOf("_")
+    tamagotchiActions(data.slice(0,i),data.slice(i+1),id)
+}
+function tamagotchiActions(action,value,id){
+    // alert("/tamagotchi/"+id+"/"+action+"/"+value)
+    location.href = "/tamagotchi/"+id+"/"+action+"/"+value
 }
 
 function seconds2time (time) {

@@ -49,8 +49,8 @@ class Tamagotchi(Base):
 class Pokemon(Base):
     """"""
     __tablename__ = "pokemons"
-
-    name = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     cenario = Column(String, default='default')
     dafault = Column(Boolean)

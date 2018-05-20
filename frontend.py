@@ -55,13 +55,17 @@ def UpdateTamagotchi(tamagotchi):
         deltaTime = (datetime.now() - tamagotchi.last_update).total_seconds()
         if( 30*60 < int(deltaTime) < 60*60):
             tamagotchi.name_pokemon= tamagotchi.name_pokemon[0:-1]+'2'
-            Pokemon1 = Pokemon(tamagotchi.name_pokemon, user.id, True)
-            s.add(Pokemon1)
+            poke = getPokemon(tamagotchi.name_pokemon, tamagotchi.user_id)
+            if poke == None:
+                Pokemon1 = Pokemon(tamagotchi.name_pokemon, tamagotchi.user_id, True)
+                s.add(Pokemon1)
         
         elif( 60*60 < int(deltaTime)):
             tamagotchi.name_pokemon= tamagotchi.name_pokemon[0:-1]+'3'
-            Pokemon2 = Pokemon(tamagotchi.name_pokemon, user.id, True)
-            s.add(Pokemon2)
+            poke = getPokemon(tamagotchi.name_pokemon, tamagotchi.user_id)
+            if poke == None:
+                Pokemon1 = Pokemon(tamagotchi.name_pokemon, tamagotchi.user_id, True)
+                s.add(Pokemon1)
 
         tamagotchi.last_update = datetime.now()
         if (tamagotchi.happy <= 0 or tamagotchi.health <= 0 or tamagotchi.hunger <= 0):
@@ -171,8 +175,11 @@ def getTamagotchi(id=None, dead=False):
 @frontend.route('/load', methods=['POST'])
 def load_tamagotchi():
     # Pega id do tamagotchi pego por requisicao ajax
-    id = int(request.form['id'])
-
+    id = request.form['id']
+    if id:
+        id = int(id,10)
+    else:
+        return None
     # Carregar Usuario logado
     user = getSessionUser()
     if user:
@@ -232,9 +239,10 @@ def index():
 def health(id=None, value=20):
     s = sessionmaker(bind=engine)()
     tama = s.query(Tamagotchi).filter(Tamagotchi.id.in_([id])).first()
-    tama.health = tama.health + float(value) if tama.health + float(value) <= 100 else 100
+    tama.health = 100
+    print( "-------------------------------------------------------------Health", tama.health)
     s.commit()
-    return redirect(url_for('.home', id=id))
+    return redirect(url_for('.home', id=id) )
 
 
 @frontend.route('/tamagotchi/<id>/hunger')
@@ -242,9 +250,9 @@ def health(id=None, value=20):
 def hunger(id=None, value=20):
     s = sessionmaker(bind=engine)()
     tama = s.query(Tamagotchi).filter(Tamagotchi.id.in_([id])).first()
-    tama.hunger = tama.hunger + float(value) if tama.hunger + float(value) <= 100 else 100
+    tama.hunger = 100
     s.commit()
-    return redirect(url_for('.home', id=id))
+    return redirect(url_for('.home', id=id) )
 
 
 @frontend.route('/tamagotchi/<id>/happy')
@@ -252,9 +260,10 @@ def hunger(id=None, value=20):
 def happy(id=None, value=20):
     s = sessionmaker(bind=engine)()
     tama = s.query(Tamagotchi).filter(Tamagotchi.id.in_([id])).first()
-    tama.happy = tama.happy + float(value) if tama.happy + float(value) <= 100 else 100
+    tama.happy = 100
+    print ("haapy", tama.happy)
     s.commit()
-    return redirect(url_for('.home', id=id))
+    return redirect(url_for('.home', id=id) )
 
 
 @frontend.route('/tamagotchi')
