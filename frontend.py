@@ -42,54 +42,57 @@ nav.register_element('no_login', Navbar(
 
 # Our index-page just shows a quick explanation. Check out the template
 # "templates/index.html" documentation for more details.
-def UpdateTamagotchi(s,tamagotchi):
-    if ( tamagotchi.state == 'Morto'):
-        return "It's Dead"
+def UpdateTamagotchi(tamagotchi):
+    if tamagotchi:
+        s = sessionmaker(bind=engine)()
+        if ( tamagotchi.state == 'Morto'):
+            return "It's Dead"
 
 
-    hungerRate = 0.01
-    healthRate = 0.01
-    happyRate = 0.01
-    deltaTime = (datetime.now() - tamagotchi.last_update).total_seconds()
-    if( 30*60 < int(deltaTime) < 60*60):
-        tamagotchi.name_pokemon= tamagotchi.name_pokemon[0:-1]+'2'
-    
-    elif( 60*60 < int(deltaTime)):
-        tamagotchi.name_pokemon= tamagotchi.name_pokemon[0:-1]+'3'
-    
+        hungerRate = 0.01
+        healthRate = 0.01
+        happyRate = 0.01
+        deltaTime = (datetime.now() - tamagotchi.last_update).total_seconds()
+        if( 30*60 < int(deltaTime) < 60*60):
+            tamagotchi.name_pokemon= tamagotchi.name_pokemon[0:-1]+'2'
+        
+        elif( 60*60 < int(deltaTime)):
+            tamagotchi.name_pokemon= tamagotchi.name_pokemon[0:-1]+'3'
+        
 
-    tamagotchi.last_update = datetime.now()
-    if (tamagotchi.happy <= 0 or tamagotchi.health <= 0 or tamagotchi.hunger <= 0):
-        tamagotchi.state = 'Morto'
+        tamagotchi.last_update = datetime.now()
+        if (tamagotchi.happy <= 0 or tamagotchi.health <= 0 or tamagotchi.hunger <= 0):
+            tamagotchi.state = 'Morto'
 
-    # atualiza estados
-    elif (tamagotchi.happy < 60):
-        tamagotchi.state = 'Triste'
+        # atualiza estados
+        elif (tamagotchi.happy < 60):
+            tamagotchi.state = 'Triste'
 
-    elif (tamagotchi.health < 60):
-        tamagotchi.state = 'Doente'
+        elif (tamagotchi.health < 60):
+            tamagotchi.state = 'Doente'
 
-    elif (tamagotchi.hunger < 60):
-        tamagotchi.state = 'Faminto'
+        elif (tamagotchi.hunger < 60):
+            tamagotchi.state = 'Faminto'
 
-    
+        
 
-    if (tamagotchi.state == 'Doente'):
-        healthRate = 0.06
+        if (tamagotchi.state == 'Doente'):
+            healthRate = 0.06
 
-    if (tamagotchi.state == 'Faminto'):
-        hungerRate = 0.05
+        if (tamagotchi.state == 'Faminto'):
+            hungerRate = 0.05
 
-    if (tamagotchi.state == 'Triste'):
-        happyRate = 0.07
+        if (tamagotchi.state == 'Triste'):
+            happyRate = 0.07
 
-    tamagotchi.hunger = tamagotchi.hunger - hungerRate * deltaTime if tamagotchi.hunger - hungerRate * deltaTime >= 0 else 0
-    tamagotchi.happy = tamagotchi.happy - happyRate * deltaTime if tamagotchi.happy - happyRate * deltaTime >= 0 else 0
-    tamagotchi.health = tamagotchi.health - healthRate * deltaTime if tamagotchi.health - healthRate * deltaTime >= 0 else 0
+        tamagotchi.hunger = tamagotchi.hunger - hungerRate * deltaTime if tamagotchi.hunger - hungerRate * deltaTime >= 0 else 0
+        tamagotchi.happy = tamagotchi.happy - happyRate * deltaTime if tamagotchi.happy - happyRate * deltaTime >= 0 else 0
+        tamagotchi.health = tamagotchi.health - healthRate * deltaTime if tamagotchi.health - healthRate * deltaTime >= 0 else 0
 
-    s.commit()
-    return "Commit Success"
-
+        s.commit()
+        return tamagotchi
+    else:
+        return redirect(url_for('.index'))
 
 def MyTamagotchis(id=None):
     s = sessionmaker(bind=engine)()
@@ -104,34 +107,106 @@ def AllTamagotchis():
     s = sessionmaker(bind=engine)()
     todos = s.query(Tamagotchi).all()
     for tamagotchi in todos:
-        print("\n------------", UpdateTamagotchi(s, tamagotchi), "--------------\n")
+        UpdateTamagotchi(tamagotchi)
+
     return sorted(todos, key= lambda tama: (tama.last_update - tama.birthday).total_seconds(), reverse= True)
 
 
+
+def getSessionUser():
+    s = sessionmaker(bind=engine)()
+    username= session.get('username')
+    if username:
+        return s.query(User).filter(User.username.in_([username])).first()
+    else:
+        return None
+
+def getPokemon(name,user_id=None):
+    s = sessionmaker(bind=engine)()
+    if user_id:
+        return s.query(Pokemon).filter(Pokemon.name.in_([name]), Pokemon.user_id.in_([user_id]) ).first()
+    else:
+        return s.query(Pokemon).filter(Pokemon.name.in_([name])).first()
+
+def getPokemonList(user_id=None):
+    s = sessionmaker(bind=engine)()
+    if user_id:
+        return s.query(Pokemon).filter( Pokemon.user_id.in_([user_id]) )
+    else:
+        return []
+
+def getUserTamagotchi(user_id=None):
+    s = sessionmaker(bind=engine)()
+    if user_id:
+        tamagotchis = []
+        for tama in s.query(Tamagotchi).filter(Tamagotchi.user_id.in_([user_id])):
+            tamagotchis.append( UpdateTamagotchi(tama))
+        return tamagotchis
+    else: 
+        return []
+    
+def getTamagotchi(id=None, dead=False):
+    s = sessionmaker(bind=engine)()
+    if id:
+        value = []
+        if dead:
+            tama= s.query(Tamagotchi).filter( Tamagotchi.id.in_([id]), Tamagotchi.state.notin_(['Dead']) )
+        
+        else:
+            tama = s.query(Tamagotchi).filter( Tamagotchi.id.in_([id]) )
+        
+        for i in tama:
+            value.append(UpdateTamagotchi(i))
+        
+        if len(value):
+            return value[0]
+        else:
+            return None
+    else:
+        return None
+
 @frontend.route('/load', methods=['POST'])
 def load_tamagotchi():
-    AllTamagotchis()
-    id = request.form['id']
-    tamagotchi = MyTamagotchis(int(id)) 
-    tamagotchis = MyTamagotchis()
-    return jsonify( 
-        {
-            'name': tamagotchi.name,
-            'happy': tamagotchi.happy,
-            'hunger': tamagotchi.hunger,
-            'health': tamagotchi.health,
-            'pokemon': tamagotchi.name_pokemon,
-            'age': (tamagotchi.last_update - tamagotchi.birthday).total_seconds(),
-            'list': map( lambda tama: ({'id': tama.id,'name': tama.name, 'state': tama.state, 'pokemon': tama.name_pokemon}) ,tamagotchis)
-        })
+    # Pega id do tamagotchi pego por requisicao ajax
+    id = int(request.form['id'])
+
+    # Carregar Usuario logado
+    user = getSessionUser()
+    if user:
+        # Carregar meus tamagotchis
+        tamagotchis = getUserTamagotchi(user.id)
+
+        # Pega Tamagotchi pelo id
+        tamagotchi = getTamagotchi(id)
+        if tamagotchi:
+            # Carregar Pokemon
+            pokemon =getPokemon(tamagotchi.name_pokemon,user.id)
+            
+            return jsonify( 
+                {
+                    'name': tamagotchi.name,
+                    'happy': tamagotchi.happy,
+                    'hunger': tamagotchi.hunger,
+                    'health': tamagotchi.health,
+                    'pokemon': tamagotchi.name_pokemon,
+                    'cenario': pokemon.cenario,
+                    'age': (tamagotchi.last_update - tamagotchi.birthday).total_seconds(),
+                    'list': map( lambda tama: ({'id': tama.id,'name': tama.name, 'state': tama.state, 'pokemon': tama.name_pokemon}) ,tamagotchis)
+                })
+        else:
+            return jsonify({'error':" Tamagotchi nao existe"})
+    else:
+        return jsonify({'error':" Usuario nao esta logado"})
 
 
 @frontend.route('/tamagotchiform')
 def novotamagotchi():
-    s = sessionmaker(bind=engine)()
-    s.query().filter(Tamagotchi.id.in_([id]), Tamagotchi.user_id.in_([user.id]))
-    return render_template('tamagotchi_form.html')
-
+    user = getSessionUser()
+    if user:
+        pokemons = getPokemonList(user.id)
+        return render_template('tamagotchi_form.html', pokemons= pokemons)
+    else:
+        return redirect(url_for('.index'))
 
 
 @frontend.route('/')
@@ -139,11 +214,15 @@ def index():
     if not session.get('logged_in'):
         return render_template('login.html')
     else:
-        tama = MyTamagotchis().first()
-        if tama:
-            return redirect(url_for('.home', id=tama.id))
-        else:
-            return redirect(url_for('.home'))
+        user = getSessionUser()
+        if user:
+            tama = getUserTamagotchi(user.id)
+            
+            if len(tama):
+                tama= tama[0]
+                return redirect(url_for('.home', id=tama.id))
+            else:
+                return redirect(url_for('.home'))
 
 
 @frontend.route('/tamagotchi/<id>/health')
@@ -180,8 +259,8 @@ def happy(id=None, value=20):
 @frontend.route('/tamagotchi/<id>')
 def home(id=None):
     if id:
-        tama= MyTamagotchis(id)
-        return render_template('index.html', tamagotchis=MyTamagotchis(), tamagotchi=tama, now=(datetime.now()- tama.birthday) )
+        tama= getTamagotchi(id)
+        return render_template('index.html', tamagotchis=MyTamagotchis(), tamagotchi=tama)
     else:
         return render_template('welcome.html')
 
@@ -221,6 +300,10 @@ def do_novo_tamagotchi():
     if POST_NOME == '':
         flash("De um nome ao Tamagotchi")
         return redirect(url_for('.novotamagotchi'))
+    
+    if IMAGEM == '':
+        flash("Escolha um Tamagotchi")
+        return redirect(url_for('.novotamagotchi'))
 
     if verificaNome(POST_NOME):
         flash("Ja existe um tamagotchi com este nome")
@@ -249,12 +332,12 @@ def cadastrar():
     user = User(POST_USERNAME,POST_PASSWORD)
 
     s.add(user)
-
-    Pokemon1 = Pokemon("bul1", user.id)
+    s.commit()
+    Pokemon1 = Pokemon("bul1", user.id, True)
     s.add(Pokemon1)
-    Pokemon2 = Pokemon("char1", user.id)
+    Pokemon2 = Pokemon("char1", user.id,False)
     s.add(Pokemon2)    
-    Pokemon3 = Pokemon("sqr1", user.id)
+    Pokemon3 = Pokemon("sqr1", user.id,False)
     s.add(Pokemon3)
 
     s.commit()

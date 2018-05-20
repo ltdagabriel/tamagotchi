@@ -5,11 +5,16 @@ function loop_load(){
     
         $.ajax(
             {
-                dataType: 'json',
-                url: '/load',
+            dataType: 'json',
+            url: '/load',
             data: jQuery.param({'id':$('#id_tamagotchi').text()}),
             type: 'POST',
             success: function(response) {
+                let error=response['error']
+                if (error){
+                    console.log(error)
+                    location.href = "/"
+                }
                 Object.keys(response).forEach((value)=>{
                     insert_into_value(value,response[value])
                 });
