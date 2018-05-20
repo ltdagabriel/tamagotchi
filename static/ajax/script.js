@@ -18,7 +18,20 @@ function loop_load(){
                 Object.keys(response).forEach((value)=>{
                     insert_into_value(value,response[value])
                 });
-                $("#imagem_pokemon").html("<img style='width:"+20*Number(response['pokemon'].slice(-1))+"%;' src='/static/pokemons/"+response['pokemon'] +".gif' />");
+                let width = "30px";
+                let size= Number(response.pokemon.name.slice(-1));
+                if(size == 1){
+                    width = "30px"
+                }
+                else if(size == 2){
+                    width = "45px"
+                }
+                else if(size == 3){
+                    width = "60px"
+                }
+
+                
+                $("#imagem_pokemon").html("<img style='width:"+width+";' src='/static/pokemons/"+response['pokemon'].name +".gif' />");
                 $("#list").html(listMake(response['list']))
                 $("#health").attr("style", "width: "+ response['health'].toPrecision(3)+"%;");
                 $("#happy").attr("style", "width: "+ response['happy'].toPrecision(3)+"%;");
@@ -76,6 +89,18 @@ function deleteTamagotchi(id){
             }
         }
     );
+}
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev) {
+    ev.preventDefault();
+    alert(ev.dataTransfer.getData("text"))
 }
 
 function seconds2time (time) {

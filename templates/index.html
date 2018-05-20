@@ -71,36 +71,49 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div id="imagem_pokemon" style="position: relative; margin-left: 40%; float: bottom;top: 50%">
+                            <div class="col-sm-12" style="height:350px"></div>
+                            <div class="col-sm-4">
+                                
+                            </div>
+                            <div id="imagem_pokemon" class="col-sm-4 text-center">
                                 <img
                                         style="width: 15%; height: 15%"
                                         src="{{url_for('static', filename='pokemons/'+tamagotchi.name_pokemon+'.gif')}}" >
                             </div>
+                            <div class="col-sm-12">
+                                <div class="col-sm-4">
+                                        <div class="dropup" style="float: bottom; top:65%;">
+                                            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Ações
+                                                <span class="caret"></span>
+                                            </button>
+                              
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                              <li><a href="/tamagotchi/{{ tamagotchi.id }}/health/10">Aplicar Curativo</a></li>
+                                              <li role="separator" class="divider">
+                                              <li><a href="/tamagotchi/{{ tamagotchi.id }}/happy/10">Brincar</a></li>
+                                              <li role="separator" class="divider">
+                                              <li><a href="/tamagotchi/{{ tamagotchi.id }}/hunger/10">Alimentar</a></li>
+                                            </ul>
+                                        </div>
+                                </div>
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-4">
+                                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal" style="position: relative; margin-left: 90%; float: bottom;top: 50%">
+                                        Loja
+                                    </button>
+                                </div>
+                            </div>
 
                             <!-- Split dropup button -->
-                            <div class="dropup" style="float: bottom; top:65%;">
-                              <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Ações
-                                <span class="caret"></span>
-                              </button>
-                              <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                <li><a href="/tamagotchi/{{ tamagotchi.id }}/health/10">Aplicar Curativo</a></li>
-                                <li role="separator" class="divider">
-                                <li><a href="/tamagotchi/{{ tamagotchi.id }}/happy/10">Brincar</a></li>
-                                <li role="separator" class="divider">
-                                <li><a href="/tamagotchi/{{ tamagotchi.id }}/hunger/10">Alimentar</a></li>
-                              </ul>
-                            </div>
+                            
 
                         </div>
                     <div id="id_tamagotchi" class="collapse">{{ tamagotchi.id }}</div>
 
                     </div>
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal" style="position: relative; margin-left: 90%; float: bottom;top: 50%">
-                      Loja
-                    </button>
+                    
                     
                     <!-- Modal -->
                     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

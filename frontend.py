@@ -55,10 +55,13 @@ def UpdateTamagotchi(tamagotchi):
         deltaTime = (datetime.now() - tamagotchi.last_update).total_seconds()
         if( 30*60 < int(deltaTime) < 60*60):
             tamagotchi.name_pokemon= tamagotchi.name_pokemon[0:-1]+'2'
+            Pokemon1 = Pokemon(tamagotchi.name_pokemon, user.id, True)
+            s.add(Pokemon1)
         
         elif( 60*60 < int(deltaTime)):
             tamagotchi.name_pokemon= tamagotchi.name_pokemon[0:-1]+'3'
-        
+            Pokemon2 = Pokemon(tamagotchi.name_pokemon, user.id, True)
+            s.add(Pokemon2)
 
         tamagotchi.last_update = datetime.now()
         if (tamagotchi.happy <= 0 or tamagotchi.health <= 0 or tamagotchi.hunger <= 0):
@@ -188,8 +191,7 @@ def load_tamagotchi():
                     'happy': tamagotchi.happy,
                     'hunger': tamagotchi.hunger,
                     'health': tamagotchi.health,
-                    'pokemon': tamagotchi.name_pokemon,
-                    'cenario': pokemon.cenario,
+                    'pokemon': {'name':pokemon.name,'cenario':pokemon.cenario},
                     'age': (tamagotchi.last_update - tamagotchi.birthday).total_seconds(),
                     'list': map( lambda tama: ({'id': tama.id,'name': tama.name, 'state': tama.state, 'pokemon': tama.name_pokemon}) ,tamagotchis)
                 })
