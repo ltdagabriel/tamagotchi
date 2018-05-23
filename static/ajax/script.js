@@ -13,7 +13,6 @@ function loop_load(){
                 let error=response['error']
                 if (error){
                     console.log(error)
-                    location.href = "/"
                 }
                 Object.keys(response).forEach((value)=>{
                     insert_into_value(value,response[value])
@@ -44,7 +43,9 @@ function loop_load(){
                         "background-image: url('/static/cenarios/"+response['pokemon'].cenario+".jpg');");
                 $("#happy").attr("style", "width: "+ response['happy'].toPrecision(3)+"%;");
                 $("#hunger").attr("style", "width: "+ response['hunger'].toPrecision(3)+"%;");
-                 setTimeout(loop_load, 1000);
+                if (!response['error']){
+                    setTimeout(loop_load, 1000);
+                }
             },
             error: function(error) {
                 setTimeout(loop_load, 1000);

@@ -1,10 +1,4 @@
-# This contains our frontend; since it is a bit messy to use the @app.route
-# decorator style when using application factories, all of our routes are
-# inside blueprints. This is the front-facing blueprint.
-#
-# You can find out more about blueprints at
-# http://flask.pocoo.org/docs/blueprints/
-
+# -*- coding: utf-8 -*-
 from flask import flash, url_for, request, session, redirect, jsonify
 
 from sqlalchemy.orm import sessionmaker
@@ -17,13 +11,6 @@ from nav import nav
 from datetime import datetime
 
 frontend = Blueprint('frontend', __name__)
-
-
-
-
-# We're adding a navbar as well through flask-navbar. In our example, the
-# navbar has an usual amount of Link-Elements, more commonly you will have a
-# lot more View instances.
 
 # navbar logado
 nav.register_element('frontend_top', Navbar(
@@ -40,7 +27,11 @@ nav.register_element('no_login', Navbar(
     ))
 
 
-class ConnectDatabase():
+class ConnectDatabase:
+    # Singleton Constructor Python
+    class __ConnectDatabase:
+        def __init__(self):
+            ConnectDatabase.s = sessionmaker(bind=engine)()
     # Session
     s = None
     # Tamagotchi Local List
@@ -50,17 +41,16 @@ class ConnectDatabase():
     # Factory Constructor
     connect = None
 
-    def getFactory(self):
-        if not self.connect:
-            self.s = sessionmaker(bind=engine)
-            self.connect = ConnectDatabase()
-        return self.connect
-
+    def __init__(self):
+        if not ConnectDatabase.connect:
+            ConnectDatabase.connect = ConnectDatabase.__ConnectDatabase()
     def initTamagotchis(self):
         for x in self.tamagotchis:
             self.SaveTamagotchi(x.tamagotchi.id)
 
-        for i in self.s.query(Tamagotchi).all():
+        self.tamagotchis = []
+
+        for i in sessionmaker(bind=engine)().query(Tamagotchi).all():
             self.tamagotchis.append(type('obj', (object,), {'tamagotchi' : i, 'history': []}))
     
     def prepareTamagotchi(self):
@@ -82,8 +72,6 @@ class ConnectDatabase():
         condition_id = True
         condition_user_id = True
         for i in range(len(self.tamagotchis)):
-            if not dead:
-                condition_dead = self.tamagotchis[i].tamagotchi.state != 'Dead'
             if id:
                 condition_id = self.tamagotchis[i].tamagotchi.id == id
             if user_id:
@@ -116,7 +104,11 @@ class ConnectDatabase():
             return None
 
     def getTamagotchi(self, id=None, user_id=None, dead=True):
-        return self.tamagotchis[self.getTamagotchiIndex(id=id, user_id=user_id, dead=dead)]
+        index = self.getTamagotchiIndex(id=id, user_id=user_id, dead=dead)
+        if isinstance(index, int):
+            return self.tamagotchis[index]
+        else:
+            return None
 
     def engineTamagotchi(self, id=None):
         if id:
@@ -151,9 +143,9 @@ class ConnectDatabase():
                 happyRate = 0.02
 
             self.setTamagotchiHistory(id,
-                                      hunger=taxa * hungerRate * deltaTime,
-                                      happy=happyRate * deltaTime * taxa,
-                                      health=healthRate * deltaTime * taxa)
+                                      hunger=-1*taxa * hungerRate * deltaTime,
+                                      happy=-1*happyRate * deltaTime * taxa,
+                                      health=-1*healthRate * deltaTime * taxa)
 
             if 30 * 60 < int(deltaTime) < 60 * 60:
                 value.tamagotchi.name_pokemon = value.tamagotchi.name_pokemon[0:-1] + '2'
@@ -165,10 +157,11 @@ class ConnectDatabase():
             self.SaveTamagotchi(id)
 
     def getDatabaseTamagotchi(self, id):
-        return self.s.query(Tamagotchi).filter(Tamagotchi.id.in_([id])).first()
+        s = sessionmaker(bind=engine)()
+        return s, s.query(Tamagotchi).filter(Tamagotchi.id.in_([id])).first()
 
     def SaveTamagotchi(self,id):
-        DataTamagotchi = self.getDatabaseTamagotchi(id)
+        s, DataTamagotchi = self.getDatabaseTamagotchi(id)
         LocalTamagotchi = self.tamagotchis[self.getTamagotchiIndex(id)]
 
         DataTamagotchi.health = sum([x.health for x in LocalTamagotchi.history])
@@ -180,70 +173,68 @@ class ConnectDatabase():
 
         DataTamagotchi.last_update = datetime.now()
 
-        self.s.commit()
+        s.commit()
 
     def SavePokemon(self, name, user_id):
-        poke = self.s.query(Pokemon).filter(
+        s = sessionmaker(bind=engine)()
+        poke = s.query(Pokemon).filter(
                 Pokemon.name.in_([name]),
                 Pokemon.user_id.in_([user_id])).first()
         if not poke:
             poke = Pokemon(name, user_id)
-            self.s.add(poke)
+            s.add(poke)
+            s.commit()
         return poke
 
     def DeleteTamagotchi(self, id):
-        tama = self.s.query(Tamagotchi).filter(Tamagotchi.id.in_([int(id)])).first()
-        self.s.delete(tama)
-        self.s.commit()
+        s = sessionmaker(bind=engine)()
+        tama = s.query(Tamagotchi).filter(Tamagotchi.id.in_([int(id)])).first()
+        s.delete(tama)
+        s.commit()
         return True
 
     def getSessionUser(self):
         if 'username' in session:
             username = str(session.get('username'))
             self.updateUser(username)
-            return self.s.query(User).filter(User.username.in_([username])).first()
+            user = list(sessionmaker(bind=engine)().query(User).filter(User.username.in_([username])))
+            if len(user):
+                return user[0]
         return None
 
     def MyTamagotchis(self, id=None):
-        self.initTamagotchis()
         user = self.getSessionUser()
-        tama = None
         if id:
-            if user:
-                tama = self.getTamagotchi(id, user.id)
-            else:
-                tama = self.getTamagotchi(id)
-
-            if tama:
-                return tama.tamagotchi
+            tama = self.getTamagotchi(id, user.id)
         else:
-            if user:
-                return self.getTamagotchi(user_id=user.id, dead=False)
-            else:
-                return None
+            tama = self.getTamagotchi(user_id=user.id)
+
+        if tama:
+            return tama.tamagotchi
 
     def CreateUser(self, username, password):
 
+        s = sessionmaker(bind=engine)()
         user = User(username, password)
 
-        self.s.add(user)
-        self.s.commit()
+        s.add(user)
+        s.commit()
 
-        self.SavePokemon(name='bull', user_id=user.id)
-        self.SavePokemon(name='charl', user_id=user.id)
-        self.SavePokemon(name='sqrl', user_id=user.id)
+        self.SavePokemon(name='bul1', user_id=user.id)
+        self.SavePokemon(name='char1', user_id=user.id)
+        self.SavePokemon(name='sqr1', user_id=user.id)
 
         return user
 
     def CreateTamagotchi(self, name, user_id, imagem):
-
+        s = sessionmaker(bind=engine)()
         tamago = Tamagotchi(
             name=name,
             user_id=user_id,
             imagem=imagem)
 
-        self.s.add(tamago)
-        self.s.commit()
+        s.add(tamago)
+        s.commit()
 
         return tamago
 
@@ -256,11 +247,11 @@ class ConnectDatabase():
 
     def getPokemon(self, name=None, user_id=None):
         if name and user_id:
-            return self.s.query(Pokemon).filter(Pokemon.name.in_([name]), Pokemon.user_id.in_([user_id]) ).first()
+            return sessionmaker(bind=engine)().query(Pokemon).filter(Pokemon.name.in_([name]), Pokemon.user_id.in_([user_id]) ).first()
         elif name and not user_id:
-            return self.s.query(Pokemon).filter(Pokemon.name.in_([name])).first()
+            return sessionmaker(bind=engine)().query(Pokemon).filter(Pokemon.name.in_([name])).first()
         elif user_id and not name:
-            return self.s.query(Pokemon).filter(Pokemon.user_id.in_([user_id]))
+            return sessionmaker(bind=engine)().query(Pokemon).filter(Pokemon.user_id.in_([user_id]))
         else:
             return None
 
@@ -269,7 +260,11 @@ class ConnectDatabase():
 
     def Login(self, username=None, password=None):
         if username and password:
-            user = self.s.query(User).filter(User.username.in_([username]), User.password.in_([password]))
+            user = sessionmaker(bind=engine)().query(User).filter(
+                User.username.in_([username]),
+                User.password.in_([password])
+            )
+
             if user:
                 session['logged_in'] = True
                 session['username'] = username
@@ -283,19 +278,20 @@ class ConnectDatabase():
         return True
 
     def GetUserByTamagotchi(self,id):
-        return self.s.query(User).filter(User.id.in_([id])).first()
+        return list(sessionmaker(bind=engine)().query(User).filter(User.id.in_([id])))
 
     def AjaxResponse(self, name, mensagem):
         return jsonify({name: mensagem})
 
+
 @frontend.route('/load', methods=['POST'])
 def load_tamagotchi():
-    DB = ConnectDatabase.getFactory()
+    DB = ConnectDatabase()
 
     # Pega id do tamagotchi pego por requisicao ajax
     id = request.form['id']
     if not id:
-        return None
+        return DB.AjaxResponse('error', 'parametro <id> não encontrado')
     # Carregar Usuario logado
     user = DB.getSessionUser()
     if user:
@@ -330,14 +326,14 @@ def load_tamagotchi():
                         }), tamagotchis)
                 })
         else:
-            return DB.AjaxResponse('error', 'Tamagotchi não encontrado ou falha no banco')
+            return DB.AjaxResponse('error', 'Tamagotchi nao encontrado ou falha no banco')
     else:
         return DB.AjaxResponse('error', 'Sessao expirada')
 
 
 @frontend.route('/tamagotchiform')
 def novotamagotchi():
-    DB = ConnectDatabase.getFactory()
+    DB = ConnectDatabase()
     user = DB.getSessionUser()
     if user:
         pokemons = DB.getPokemon(user_id=user.id)
@@ -348,12 +344,14 @@ def novotamagotchi():
 
 @frontend.route('/')
 def index():
-    DB = ConnectDatabase.getFactory()
+    DB = ConnectDatabase()
     user = DB.getSessionUser()
     if not user:
         return render_template('login.html')
     else:
+        DB.initTamagotchis()
         tama = DB.MyTamagotchis()
+        print (tama)
         if tama:
             return redirect(url_for('.home', id=tama.id))
         else:
@@ -364,7 +362,7 @@ def index():
 @frontend.route('/tamagotchi/<id>/health')
 @frontend.route('/tamagotchi/<id>/health/<value>')
 def health(id=None, value=20):
-    DB = ConnectDatabase.getFactory()
+    DB = ConnectDatabase()
     if request.method == 'POST':
         DB.setTamagotchiHistory(id=int(request.form['id'], 10), health=int(request.form['value'], 10))
         return DB.AjaxResponse('success', 'Vida atualizada')
@@ -377,7 +375,7 @@ def health(id=None, value=20):
 @frontend.route('/tamagotchi/<id>/hunger')
 @frontend.route('/tamagotchi/<id>/hunger/<value>')
 def hunger(id=None, value=20):
-    DB = ConnectDatabase.getFactory()
+    DB = ConnectDatabase()
     if request.method == 'POST':
         DB.setTamagotchiHistory(id=int(request.form['id'], 10), hunger=int(request.form['value'], 10))
         return DB.AjaxResponse('success', 'Fome atualizada')
@@ -390,7 +388,7 @@ def hunger(id=None, value=20):
 @frontend.route('/tamagotchi/<id>/happy')
 @frontend.route('/tamagotchi/<id>/happy/<value>')
 def happy(id=None, value=20):
-    DB = ConnectDatabase.getFactory()
+    DB = ConnectDatabase()
     if request.method == 'POST':
         DB.setTamagotchiHistory(id=int(request.form['id'], 10), happy=int(request.form['value'], 10))
         return DB.AjaxResponse('success', 'Felicidade atualizada')
@@ -402,7 +400,7 @@ def happy(id=None, value=20):
 @frontend.route('/tamagotchi')
 @frontend.route('/tamagotchi/<id>')
 def home(id=None):
-    DB = ConnectDatabase.getFactory()
+    DB = ConnectDatabase()
     if id:
         user = DB.getSessionUser()
         if user:
@@ -421,7 +419,7 @@ def cadastro():
         return render_template('user_form.html')
     elif request.method == 'POST':
 
-        DB = ConnectDatabase.getFactory()
+        DB = ConnectDatabase()
         DB.CreateUser(
             str(request.form['username']),
             str(request.form['password'])
@@ -432,7 +430,7 @@ def cadastro():
 
 @frontend.route('/login', methods=['POST'])
 def do_login():
-    DB = ConnectDatabase.getFactory()
+    DB = ConnectDatabase()
 
     if not DB.Login(
                         username=str(request.form['username']),
@@ -443,7 +441,7 @@ def do_login():
  
 @frontend.route("/logout")
 def logout():
-    DB = ConnectDatabase.getFactory()
+    DB = ConnectDatabase()
     DB.Logout()
     return DB.RedirectIndex()
 
@@ -464,7 +462,7 @@ def do_novo_tamagotchi():
         return redirect(url_for('.novotamagotchi'))
     else:
 
-        DB = ConnectDatabase.getFactory()
+        DB = ConnectDatabase()
         user = DB.getSessionUser()
         DB.CreateTamagotchi(
             name=POST_NOME,
@@ -476,7 +474,7 @@ def do_novo_tamagotchi():
 
 @frontend.route('/ranking')
 def rank():
-    DB = ConnectDatabase.getFactory()
+    DB = ConnectDatabase()
     return render_template('rank.html',
                            tamagotchis=DB.AllTamagotchis(),
                            pegaCriadorDoTamagotchi=DB.GetUserByTamagotchi)
@@ -493,7 +491,7 @@ def verificaNome(nome):
 
 @frontend.route('/tamagotchi/del', methods=['POST'])
 def deletaBixo():
-    DB = ConnectDatabase.getFactory()
+    DB = ConnectDatabase()
 
     DB.DeleteTamagotchi(request.form['id'])
 
@@ -501,7 +499,7 @@ def deletaBixo():
 
 @frontend.route('/tamagotchi/buy', methods=['POST'])
 def compraBixo():
-    DB = ConnectDatabase.getFactory()
+    DB = ConnectDatabase()
 
     user = DB.getSessionUser()
     IMAGEM = str(request.form['poke'])
