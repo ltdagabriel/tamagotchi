@@ -27,7 +27,7 @@
                     {% for user in pegaCriadorDoTamagotchi(tama.id) %}
                         <p>Criador: {{ user.username}}</p>
                     {% endfor %}
-                    <img src="{{url_for('static', filename='pokemons/'+tama.name_pokemon+'1.gif')}}"  style=" width:30px; margin-rigth:0px" >
+                    <img src="{{url_for('static', filename='pokemons/'+tama.name_pokemon+'.gif')}}"  style=" width:30px; margin-rigth:0px" >
                 </div>
                 {% endfor %}
                 </ul>

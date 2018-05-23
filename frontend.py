@@ -45,13 +45,15 @@ class ConnectDatabase:
         if not ConnectDatabase.connect:
             ConnectDatabase.connect = ConnectDatabase.__ConnectDatabase()
     def initTamagotchis(self):
+        self.prepareTamagotchi()
         for x in self.tamagotchis:
+            self.engineTamagotchi(x.tamagotchi.id)
             self.SaveTamagotchi(x.tamagotchi.id)
 
         self.tamagotchis = []
 
         for i in sessionmaker(bind=engine)().query(Tamagotchi).all():
-            self.tamagotchis.append(type('obj', (object,), {'tamagotchi' : i, 'history': []}))
+            self.tamagotchis.append(type('obj', (object,), {'tamagotchi': i, 'history': []}))
     
     def prepareTamagotchi(self):
         for x in range(len(self.tamagotchis)):
@@ -65,7 +67,6 @@ class ConnectDatabase:
             self.tamagotchis[x].tamagotchi.health = health
             self.tamagotchis[x].tamagotchi.happy = happy
             self.tamagotchis[x].tamagotchi.hunger = hunger
-            self.tamagotchis[x].history = []
 
     def getTamagotchiIndex(self, id=None, user_id=None, dead=True):
         condition_dead = True
@@ -95,14 +96,17 @@ class ConnectDatabase:
         else:
             self.users.append(type('obj', (object,), {'username': username, 'time': datetime.now()}))
 
-    def setTamagotchiHistory(self, id=None, health=0, happy=0, hunger=0):
+    def setTamagotchiHistory(self, id=None, health=0.0, happy=0.0, hunger=0.0):
         if id:
-            index = self.getTamagotchiIndex(id)
-
-            self.tamagotchis[index].history.append(type('obj', (object,), {'health': health, 'happy': happy, 'hunger': hunger }))
-        else:
-            return None
-
+            index = self.getTamagotchiIndex(id=id)
+            if isinstance(index, int):
+                self.tamagotchis[index].history.append(type('obj', (object,), {'health': health,
+                                                                               'happy': happy,
+                                                                               'hunger': hunger}))
+                return self.tamagotchis[index].history
+            else:
+                return None
+        return None
     def getTamagotchi(self, id=None, user_id=None, dead=True):
         index = self.getTamagotchiIndex(id=id, user_id=user_id, dead=dead)
         if isinstance(index, int):
@@ -113,6 +117,10 @@ class ConnectDatabase:
     def engineTamagotchi(self, id=None):
         if id:
             value = self.getTamagotchi(id)
+
+            if value.tamagotchi.state == 'Morto':
+                return
+
             healthRate = 0.01
             hungerRate = 0.01
             happyRate = 0.01
@@ -142,16 +150,19 @@ class ConnectDatabase:
             if value.tamagotchi.state == 'Triste':
                 happyRate = 0.02
 
-            self.setTamagotchiHistory(id,
+            self.setTamagotchiHistory(value.tamagotchi.id,
                                       hunger=-1*taxa * hungerRate * deltaTime,
                                       happy=-1*happyRate * deltaTime * taxa,
                                       health=-1*healthRate * deltaTime * taxa)
+
+            print('history', value.history)
 
             if 30 * 60 < int(deltaTime) < 60 * 60:
                 value.tamagotchi.name_pokemon = value.tamagotchi.name_pokemon[0:-1] + '2'
 
             elif 60 * 60 < int(deltaTime):
                 value.tamagotchi.name_pokemon = value.tamagotchi.name_pokemon[0:-1] + '3'
+
             self.SavePokemon(value.tamagotchi.name_pokemon, value.tamagotchi.user_id)
 
             self.SaveTamagotchi(id)
@@ -164,9 +175,12 @@ class ConnectDatabase:
         s, DataTamagotchi = self.getDatabaseTamagotchi(id)
         LocalTamagotchi = self.tamagotchis[self.getTamagotchiIndex(id)]
 
-        DataTamagotchi.health = sum([x.health for x in LocalTamagotchi.history])
-        DataTamagotchi.hunger = sum([x.hunger for x in LocalTamagotchi.history])
-        DataTamagotchi.happy = sum([x.happy for x in LocalTamagotchi.history])
+        if DataTamagotchi.state == 'Morto':
+            return
+
+        DataTamagotchi.health = DataTamagotchi.health + sum([x.health for x in LocalTamagotchi.history])
+        DataTamagotchi.hunger = DataTamagotchi.hunger + sum([x.hunger for x in LocalTamagotchi.history])
+        DataTamagotchi.happy = DataTamagotchi.happy + sum([x.happy for x in LocalTamagotchi.history])
 
         DataTamagotchi.name_pokemon = LocalTamagotchi.tamagotchi.name_pokemon
         DataTamagotchi.state = LocalTamagotchi.tamagotchi.state
@@ -205,7 +219,7 @@ class ConnectDatabase:
     def MyTamagotchis(self, id=None):
         user = self.getSessionUser()
         if id:
-            tama = self.getTamagotchi(id, user.id)
+            tama = self.getTamagotchi(id=id, user_id=user.id)
         else:
             tama = self.getTamagotchi(user_id=user.id)
 
@@ -287,11 +301,11 @@ class ConnectDatabase:
 @frontend.route('/load', methods=['POST'])
 def load_tamagotchi():
     DB = ConnectDatabase()
-
+    DB.initTamagotchis()
     # Pega id do tamagotchi pego por requisicao ajax
     id = request.form['id']
     if not id:
-        return DB.AjaxResponse('error', 'parametro <id> não encontrado')
+        return DB.AjaxResponse('error', 'parametro <'+id+'> não encontrado')
     # Carregar Usuario logado
     user = DB.getSessionUser()
     if user:
@@ -299,12 +313,12 @@ def load_tamagotchi():
         tamagotchis = DB.AllTamagotchis(user_id=user.id)
 
         # Pega Tamagotchi pelo id
-        tamagotchi = DB.MyTamagotchis(id=int(id, 10))
+        tamagotchi = DB.MyTamagotchis(id=int(id))
         if tamagotchi:
 
             # Carregar Pokemon
             pokemon = DB.getPokemon(tamagotchi.name_pokemon, user.id)
-            
+
             return jsonify( 
                 {
                     'name': tamagotchi.name,
@@ -351,47 +365,39 @@ def index():
     else:
         DB.initTamagotchis()
         tama = DB.MyTamagotchis()
-        print (tama)
         if tama:
             return redirect(url_for('.home', id=tama.id))
         else:
             return redirect(url_for('.home'))
 
 
-@frontend.route('/tamagotchi/health', methods=['POST'])
-@frontend.route('/tamagotchi/<id>/health')
-@frontend.route('/tamagotchi/<id>/health/<value>')
-def health(id=None, value=20):
+@frontend.route('/tamagotchi/update/health', methods=['POST'])
+def health():
     DB = ConnectDatabase()
     if request.method == 'POST':
-        DB.setTamagotchiHistory(id=int(request.form['id'], 10), health=int(request.form['value'], 10))
-        return DB.AjaxResponse('success', 'Vida atualizada')
+        value = DB.setTamagotchiHistory(id=int(request.form['id'], 10), health=int(request.form['value'], 10))
+        return DB.AjaxResponse('success', value)
     else:
-        DB.setTamagotchiHistory(id=int(id, 10), health=int(value, 10))
+        DB.setTamagotchiHistory(id=int(id, 10), happy=int(value, 10))
         return redirect(url_for('.home', id=id))
 
-
-@frontend.route('/tamagotchi/hunger', methods=['POST'])
-@frontend.route('/tamagotchi/<id>/hunger')
-@frontend.route('/tamagotchi/<id>/hunger/<value>')
+@frontend.route('/tamagotchi/update/hunger', methods=['POST'])
 def hunger(id=None, value=20):
     DB = ConnectDatabase()
     if request.method == 'POST':
-        DB.setTamagotchiHistory(id=int(request.form['id'], 10), hunger=int(request.form['value'], 10))
-        return DB.AjaxResponse('success', 'Fome atualizada')
+        value = DB.setTamagotchiHistory(id=int(request.form['id'], 10), hunger=int(request.form['value'], 10))
+        return DB.AjaxResponse('success', value)
     else:
         DB.setTamagotchiHistory(id=int(id, 10), hunger=int(value, 10))
         return redirect(url_for('.home', id=id))
 
 
-@frontend.route('/tamagotchi/happy', methods=['POST'])
-@frontend.route('/tamagotchi/<id>/happy')
-@frontend.route('/tamagotchi/<id>/happy/<value>')
+@frontend.route('/tamagotchi/update/happy', methods=['POST'])
 def happy(id=None, value=20):
     DB = ConnectDatabase()
     if request.method == 'POST':
-        DB.setTamagotchiHistory(id=int(request.form['id'], 10), happy=int(request.form['value'], 10))
-        return DB.AjaxResponse('success', 'Felicidade atualizada')
+        value = DB.setTamagotchiHistory(id=int(request.form['id'], 10), happy=int(request.form['value'], 10))
+        return DB.AjaxResponse('success', {'id': int(request.form['id']), 'value': int(request.form['value'])})
     else:
         DB.setTamagotchiHistory(id=int(id, 10), happy=int(value, 10))
         return redirect(url_for('.home', id=id))
@@ -401,12 +407,13 @@ def happy(id=None, value=20):
 @frontend.route('/tamagotchi/<id>')
 def home(id=None):
     DB = ConnectDatabase()
+    DB.initTamagotchis()
     if id:
         user = DB.getSessionUser()
         if user:
             return render_template('index.html',
                                    tamagotchis=DB.AllTamagotchis(user_id=user.id),
-                                   tamagotchi=DB.MyTamagotchis(id))
+                                   tamagotchi=DB.MyTamagotchis(int(id)))
         else:
             return DB.RedirectIndex()
     else:

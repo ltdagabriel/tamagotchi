@@ -43,9 +43,8 @@ function loop_load(){
                         "background-image: url('/static/cenarios/"+response['pokemon'].cenario+".jpg');");
                 $("#happy").attr("style", "width: "+ response['happy'].toPrecision(3)+"%;");
                 $("#hunger").attr("style", "width: "+ response['hunger'].toPrecision(3)+"%;");
-                if (!response['error']){
-                    setTimeout(loop_load, 1000);
-                }
+                setTimeout(loop_load, 1000);
+
             },
             error: function(error) {
                 setTimeout(loop_load, 1000);
@@ -122,7 +121,20 @@ function drop(ev, id) {
 }
 function tamagotchiActions(action,value,id){
     // alert("/tamagotchi/"+id+"/"+action+"/"+value)
-    location.href = "/tamagotchi/"+id+"/"+action+"/"+value
+    $.ajax(
+        {
+            dataType: 'json',
+            url: '/tamagotchi/update/'+action,
+            data: jQuery.param({'id': id, 'value': value}),
+            type: 'POST',
+            success: function(response) {
+                console.log(response)
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        }
+    );
 }
 
 function seconds2time (time) {
