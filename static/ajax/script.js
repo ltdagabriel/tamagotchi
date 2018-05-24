@@ -1,5 +1,7 @@
 
-$(document).ready(loop_load())
+$(document).ready(()=>{
+    loop_load()
+})
 
 function loop_load(){
     
@@ -28,12 +30,16 @@ function loop_load(){
                 else if(size == 3){
                     width = "60px"
                 }
-
+                let x = Jogo_Da_Velha('Load','','')
+                if(!x.error){
+                    $("#Jogo_da_Velha").modal();
+                    $('#Jogo_da_Velha').on('show.bs.modal', function (event) {
+                      modal.find('.modal-title').text("Game" + x.key)
+                    })
+                }
                 
-                $("#imagem_pokemon").html(
-                    "<img style='width:"+width+";' "+
-                    "onmouseover='bigImg(this)' onmouseout='normalImg(this)'"+
-                    "src='/static/pokemons/"+response['pokemon'].name +".gif' />");
+                $("#imagem_pokemon").attr('src', "/static/pokemons/"+ response['pokemon'].name + ".gif")
+
                 $("#list").html(listMake(response['list']))
                 $("#health").attr("style", "width: "+ response['health'].toPrecision(3)+"%;");
                 $("#cenario").attr("style", 
@@ -43,6 +49,7 @@ function loop_load(){
                         "background-image: url('/static/cenarios/"+response['pokemon'].cenario+".jpg');");
                 $("#happy").attr("style", "width: "+ response['happy'].toPrecision(3)+"%;");
                 $("#hunger").attr("style", "width: "+ response['hunger'].toPrecision(3)+"%;");
+                generate_list()
                 setTimeout(loop_load, 1000);
 
             },
@@ -60,6 +67,59 @@ function insert_into_value(to,value){
     $("#"+to).html(value);
     }
 }
+function generate_list() {
+    $.ajax(
+        {
+            dataType: 'json',
+            url: '/games/jogo_da_velha',
+            data: jQuery.param({
+                                'game_name': 'Jogo_da_Velha',
+                                'comand': 'All',
+                                'param': '',
+                                'game':''
+                               }),
+            type: 'POST',
+            success: function(response) {
+                let html = "<div class=\"list-group\">"
+                console.log(response)
+                for( let i=0; i<response.games.length; i++){
+                    html+=
+                        "<a href=\"#\" class=\"list-group-item\">"+
+                            response.games[i].player1 + " vs " + response.games[i].player2
+                        "</a>"
+                }
+                html+="</div>"
+                $("#game_list").html(html);
+                console.log(response)
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        }
+    );
+}
+function Jogo_Da_Velha(comand, param, game_id){
+    $.ajax(
+        {
+            dataType: 'json',
+            url: '/games/jogo_da_velha',
+            data: jQuery.param({
+                                'game_name': 'Jogo_da_Velha',
+                                'comand': comand,
+                                'param': param,
+                                'game':game_id
+                               }),
+            type: 'POST',
+            success: function(response) {
+                console.log(response)
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        }
+    );
+}
+
 function listMake(tamagotchi){
     let test="";
     for (let i = 0; i < tamagotchi.length; i++){

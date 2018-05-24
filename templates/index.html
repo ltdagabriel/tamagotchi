@@ -3,7 +3,11 @@
 
 
  {% import "bootstrap/utils.html" as utils %}
- 
+ <style>
+table, th, td {
+    border: 1px solid black;
+}
+</style>
  {% block content %}
    <div class="container">
     <audio id="music" src="{{ url_for('static', filename='songs/Pokemon-Tema.mp3')}}" preload="auto" autoplay loop>
@@ -30,7 +34,6 @@
 
                            style="
                                height: 500px;
-                               background-color: aqua;
                                background-size: 100%;
                                background-repeat: no-repeat;
                                background-image: url({{ url_for('static', filename='cenarios/default.jpg') }});
@@ -47,6 +50,11 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-sm-12">
+                                        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#Jogo_da_Velha">
+                                          Jogo da Velha
+                                        </button>
+                                    </div>
                                 </div>
                                 <div class="col-sm-4" style="margin-top: 10px">
                                     <div class="col-sm-2">
@@ -56,6 +64,14 @@
                                          <div class="progress">
                                             <div id="happy" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi.happy}}%;">
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12" style="height: 450px;">
+                                        <div class="col-sm-12" style="height: 200px"></div>
+                                        <div ondrop="drop(event,{{ tamagotchi.id }})" class="col-sm-12 text-center" >
+                                            <img    id="imagem_pokemon"
+                                                    style="width: 100%"
+                                                    src="{{url_for('static', filename='pokemons/'+tamagotchi.name_pokemon+'.gif')}}" >
                                         </div>
                                     </div>
                                 </div>
@@ -69,40 +85,28 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-sm-12">
+                                        <div class="col-sm-12" style="float: right">
+                                            <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="health_10" ondragstart="drag(event)"  src="{{url_for('static', filename='icones/seringa.png')}}" draggable="true" / >
+                                        </div>
+                                        <div class="col-sm-12" style="float: right">
+                                            <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="hunger_10" ondragstart="drag(event)"  src="{{url_for('static', filename='icones/maca.png')}}" draggable="true" / >
+                                        </div>
+                                        <div class="col-sm-12" style="float: right">
+                                            <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="happy_10" ondragstart="drag(event)"  src="{{url_for('static', filename='icones/bola.png')}}" draggable="true" / >
+                                        </div>
+                                        <div class="col-sm-12">
+                                            <div class="col-sm-4">
+                                                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal" style="position: relative; margin-left: 90%; float: bottom;top: 50%">
+                                                    Loja
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-sm-12" style="height:350px">
-                            <div class="col-sm-8" style="height:300px"></div>
-                            <div class="col-sm-2" style="height:300px"></div>
-                            <div class="col-sm-2">
-                                <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="health_10" ondragstart="drag(event)"  src="{{url_for('static', filename='icones/seringa.png')}}" draggable="true" / >
-                            </div>
-                            <div class="col-sm-2">
-                                <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="hunger_10" ondragstart="drag(event)"  src="{{url_for('static', filename='icones/maca.png')}}" draggable="true" / >
-                            </div>
-                            <div class="col-sm-2">
-                                <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="happy_10" ondragstart="drag(event)"  src="{{url_for('static', filename='icones/bola.png')}}" draggable="true" / >
-                            </div>
-                            </div>
-                            <div class="col-sm-4">
-                                
-                            </div>
-                            <div id="imagem_pokemon" ondrop="drop(event,{{ tamagotchi.id }})" class="col-sm-4 text-center" >
-                                <img
-                                        onmouseover="bigImg(this)" onmouseout="normalImg(this)"
-                                        style="width: 15%; height: 15%"
-                                        src="{{url_for('static', filename='pokemons/'+tamagotchi.name_pokemon+'.gif')}}" >
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="col-sm-4">
-                                        
-                                </div>
-                                <div class="col-sm-4"></div>
-                                <div class="col-sm-4">
-                                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal" style="position: relative; margin-left: 90%; float: bottom;top: 50%">
-                                        Loja
-                                    </button>
-                                </div>
+
+
                             </div>
 
                             <!-- Split dropup button -->
@@ -186,6 +190,45 @@
                 </div>
                 {% endfor %}
                 </ul>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade bs-example-modal-lg" id="Jogo_da_Velha" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Jogo_Da_Velha</h4>
+                  </div>
+                  <div class="modal-body">
+                    <button onclick="Jogo_Da_Velha('New','','');">New game</button>
+                    <div class="col-sm-8">
+                      <table style="width:100%">
+                          <tr>
+                            <th id="0,0">0,0</th>
+                            <th id="0,1">0,1</th>
+                            <th id="0,2">0,2</th>
+                          </tr>
+                          <tr>
+                            <th id="1,0">1,0</th>
+                            <th id="1,1">1,1</th>
+                            <th id="1,2">1,2</th>
+                          </tr>
+                          <tr>
+                            <th id="2,0">0,0</th>
+                            <th id="2,1">0,1</th>
+                            <th id="2,2">0,2</th>
+                          </tr>
+                      </table>
+                    </div>
+                    <div id="game_list" class="col-sm-4">
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
             </div>
         </div>
     </div>
