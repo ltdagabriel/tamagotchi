@@ -166,7 +166,7 @@ function Prepare_Jogo_Da_Velha(game,key){
                 adversario = 1
             }
             if (Jogo_Da_Velha_Vitoria(game.board)){
-                if(game.next == game["player"+player+"_piece"]){
+                if(game.next == game["player"+adversario+"_piece"]){
                     $("#next").html("Vitória do jogador " + game["player"+player] )
                     console.log("Vitoria do jogador",game["player"+player])
                 }
