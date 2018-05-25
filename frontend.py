@@ -324,6 +324,7 @@ class ConnectDatabase:
                                                           'player2': None,
                                                           'player1_piece': pieces[rand],
                                                           'player2_piece': pieces[0 if rand else 1],
+                                                          'next': 'X',
                                                           'board': [
                                                               ['B', 'B', 'B'],
                                                               ['B', 'B', 'B'],
@@ -331,6 +332,7 @@ class ConnectDatabase:
                                                           ]}))
                 return jsonify({'key': (len(self.games)-1), 'game': {'player1': self.games[len(self.games)-1].player1,
                                                                      'player2': self.games[len(self.games)-1].player2,
+                                                                     'next': self.games[len(self.games)-1].next,
                                                                      'player1_piece': self.games[len(self.games)-1].player1_piece,
                                                                      'player2_piece': self.games[len(self.games)-1].player2_piece,
                                                                      'board': self.games[len(self.games)-1].board}})
@@ -339,44 +341,62 @@ class ConnectDatabase:
                 self.games[int(game)].player2 = player
                 return jsonify({'key': int(game), 'game': {'player1': self.games[int(game)].player1,
                                                            'player2': self.games[int(game)].player2,
+                                                           'next': self.games[int(game)].next,
+                                                           'player1_piece': self.games[int(game)].player1_piece,
+                                                           'player2_piece': self.games[int(game)].player2_piece,
+                                                           'board': self.games[int(game)].board}})
+
+            if comand == 'Wait':
+                return jsonify({'key': int(game), 'game': {'player1': self.games[int(game)].player1,
+                                                           'player2': self.games[int(game)].player2,
+                                                           'next': self.games[int(game)].next,
                                                            'player1_piece': self.games[int(game)].player1_piece,
                                                            'player2_piece': self.games[int(game)].player2_piece,
                                                            'board': self.games[int(game)].board}})
 
             if comand == 'Move':
-                linha, coluna = [int(x) for x in param.split(',')]
-                piece = self.games[int(game)].player1_piece if self.games[int(game)].player1 == player else self.games[int(game)].player2_piece
-
+                linha = int(param[0])
+                coluna = int(param[1])
+                piece = self.games[int(game)].player1_piece
+                next = self.games[int(game)].player2_piece
+                if self.games[int(game)].player2 == player:
+                    piece = self.games[int(game)].player2_piece
+                    next = self.games[int(game)].player1_piece
+                
+                
+                self.games[int(game)].next = next
                 self.games[int(game)].board[linha][coluna] = piece
-                return jsonify({'key': game,
-                                'game': {'player1': self.games[int(game)].player1,
-                                         'player2': self.games[int(game)].player2,
-                                         'player1_piece': self.games[int(game)].player1_piece,
-                                         'player2_piece': self.games[int(game)].player2_piece,
-                                         'board': self.games[int(game)].board},
-                                'moved': piece + " in L: " + linha + "C: " + coluna})
+
+
+                return jsonify({'key': int(game), 'game': {'player1': self.games[int(game)].player1,
+                                                           'player2': self.games[int(game)].player2,
+                                                           'next': self.games[int(game)].next,
+                                                           'player1_piece': self.games[int(game)].player1_piece,
+                                                           'player2_piece': self.games[int(game)].player2_piece,
+                                                           'board': self.games[int(game)].board}})
 
             if comand == 'Load':
                 for x in len(self.games):
                     if self.games[x].player1 == player and self.games[x].player2:
                         return jsonify({'key': x, 'game': {'player1': self.games[x].player1,
                                                            'player2': self.games[x].player2,
+                                                           'next': self.games[x].next,
                                                            'player1_piece': self.games[x].player1_piece,
                                                            'player2_piece': self.games[x].player2_piece,
                                                            'board': self.games[x].board}})
                     elif self.games[x].player2 == player and self.games[x].player1:
                         return jsonify({'key': x, 'game': {'player1': self.games[x].player1,
                                                            'player2': self.games[x].player2,
+                                                           'next': self.games[x].next,
                                                            'player1_piece': self.games[x].player1_piece,
                                                            'player2_piece': self.games[x].player2_piece,
                                                            'board': self.games[x].board}})
                 return jsonify({'error': 'Não ha games'})
             if comand == 'All':
-                return jsonify({'games': map(lambda x: {'player1': self.games[x].player1,
-                                                        'player2': self.games[x].player2,
-                                                        'player1_piece': self.games[x].player1_piece,
-                                                        'player2_piece': self.games[x].player2_piece,
-                                                        'board': self.games[x].board}, self.games)})
+                return jsonify({'games': map(lambda (i,x): {'player1': x.player1,
+                                                            'key': i,
+                                                            'player2': x.player2
+                                                           }, enumerate(self.games))})
 
     instance = None
 
@@ -582,6 +602,11 @@ def do_novo_tamagotchi():
 
         return DB.RedirectIndex()
 
+@frontend.route('/user/get', methods=['POST'])
+def getUser():
+    DB = ConnectDatabase()
+    user = DB.getSessionUser()
+    return jsonify({'user': user.username})
 
 @frontend.route('/ranking')
 def rank():
