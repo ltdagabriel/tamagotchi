@@ -28,6 +28,11 @@
 {% block styles -%}
     {{super()}}  {# do not forget to call super or Bootstrap's own stylesheets
                     will disappear! #}
+    <style>
+    table, th, td {
+        border: 1px solid black;
+    }
+    </style>
     <link rel="stylesheet" type="text/css"
           href="{{url_for('static', filename='sample-app.css')}}">
 {% endblock %}

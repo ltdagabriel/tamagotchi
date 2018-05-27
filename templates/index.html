@@ -3,11 +3,6 @@
 
 
  {% import "bootstrap/utils.html" as utils %}
- <style>
-table, th, td {
-    border: 1px solid black;
-}
-</style>
  {% block content %}
    <div class="container">
     <audio id="music" src="{{ url_for('static', filename='songs/Pokemon-Tema.mp3')}}" preload="auto" autoplay loop>
@@ -23,7 +18,7 @@ table, th, td {
             {%- endif %}
         {%- endwith %}
         <div class="row">
-            <div class="col-sm-9 col-md-10">
+            <div class="col-sm-12 col-md-12">
                 {%- if tamagotchi %}
                     <div class="col-sm-6 text-uppercase text-left"><h3 id="name">{{tamagotchi.name}}</h3></div>
                     <div class="col-sm-6 text-right"><h3 id="age">{{ tamagotchi.last_update - tamagotchi.birthday }}</h3></div>
@@ -50,11 +45,12 @@ table, th, td {
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-12">
-                                        <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#Jogo_da_Velha">
-                                          Jogo da Velha
-                                        </button>
-                                    </div>
+
+                                    <div class="col-sm-6 col-md-6">
+                                            <ul id="list" class="text-left">
+                                            
+                                            </ul>
+                                        </div>
                                 </div>
                                 <div class="col-sm-4" style="margin-top: 10px">
                                     <div class="col-sm-2">
@@ -104,8 +100,15 @@ table, th, td {
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-sm-12">
+                                    <div class="col-sm-2" style="float: right">
+                                        <button type="button" class="btn btn-sm" data-toggle="modal" data-target="#Jogo_da_Velha">
+                                            <img style="width: 50px;float: left" src="{{url_for('static', filename='icones/hash.png')}}" >
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
-
+                            
 
                             </div>
 
@@ -180,17 +183,7 @@ table, th, td {
                     </div>
                 {%- endif %}
             </div>
-            <div class="col-sm-3 col-md-2">
-                <ul id="list" class="list-group text-center">
-                {% for tama in tamagotchis %}
-                <div class="list-group-item">
-                    <a href="/tamagotchi/{{tama.id}}">{{ tama.name }}</a>
-                    
-                    <img src="{{url_for('static', filename='pokemons/'+tama.name_pokemon+'.gif')}}"  style=" width:30px; margin-rigth:0px" >
-                </div>
-                {% endfor %}
-                </ul>
-            </div>
+
 
             <!-- Modal -->
             <div class="modal fade bs-example-modal-lg" id="Jogo_da_Velha" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -200,29 +193,34 @@ table, th, td {
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <h4 class="modal-title" id="next">Jogo_Da_Velha</h4>
                   </div>
-                  <div class="modal-body">
-                    <button onclick="Jogo_Da_Velha('New','','');">New game</button>
-                    <button onclick="generate_list();">Enter Game</button>
-                    <div class="col-sm-8">
-                      <table style="width:100%">
+                  <div class="modal-body col-sm-12">
+
+                    <div class="col-sm-6">
+                      <table cellpadding="10" class="col-sm-12 text-center text-uppercase">
                           <tr>
-                            <th id="00">0,0</th>
-                            <th id="01">0,1</th>
-                            <th id="02">0,2</th>
+                            <th id="00"><img class="col-sm-12" src="/static/games/B.png" /></th>
+                            <th id="01"><img class="col-sm-12" src="/static/games/B.png" /></th>
+                            <th id="02"><img class="col-sm-12" src="/static/games/B.png" /></th>
                           </tr>
                           <tr>
-                            <th id="10">1,0</th>
-                            <th id="11">1,1</th>
-                            <th id="12">1,2</th>
+                            <th id="10"><img class="col-sm-12" src="/static/games/B.png" /></th>
+                            <th id="11"><img class="col-sm-12" src="/static/games/B.png" /></th>
+                            <th id="12"><img class="col-sm-12" src="/static/games/B.png" /></th>
                           </tr>
                           <tr>
-                            <th id="20">0,0</th>
-                            <th id="21">0,1</th>
-                            <th id="22">0,2</th>
+                            <th id="20"><img class="col-sm-12" src="/static/games/B.png" /></th>
+                            <th id="21"><img class="col-sm-12" src="/static/games/B.png" /></th>
+                            <th id="22"><img class="col-sm-12" src="/static/games/B.png" /></th>
                           </tr>
                       </table>
                     </div>
-                    <div id="game_list" class="col-sm-4">
+
+                    <div class="col-sm-6">
+                        <button onclick="Jogo_Da_Velha('New','','');">New game</button>
+                        <button onclick="generate_list();">Enter Game</button>
+
+                        <div id="game_list" class="col-sm-12 row">
+                        </div>
                     </div>
                   </div>
                   <div class="modal-footer">

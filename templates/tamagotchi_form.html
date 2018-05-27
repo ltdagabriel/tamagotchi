@@ -24,8 +24,8 @@
                 <div class="radio">
                   {%- for pokemon in pokemons %}
                     <label class="radio-inline">
-                        <input type="radio" name="poke" id="poke" value="{{pokemon.name}}">
-                        <img src="/static/pokemons/{{pokemon.name}}.gif">
+                        <input type="radio" name="poke" id="poke" value="{{pokemon.nome}}">
+                        <img src="/static/pokemons/{{pokemon.img}}" style="width: 70px">
                     </label>
                   {%- endfor %}
                 </div>  

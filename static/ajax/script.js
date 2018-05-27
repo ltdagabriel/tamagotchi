@@ -3,6 +3,9 @@ $(document).ready(()=>{
     loop_load()
 })
 
+var inGame = false
+var newError = 1
+
 function loop_load(){
     
         $.ajax(
@@ -16,57 +19,45 @@ function loop_load(){
                 if (error){
                     console.log(error)
                 }
-                Object.keys(response).forEach((value)=>{
-                    insert_into_value(value,response[value])
-                });
-                let width = "30px";
-                let size= Number(response.pokemon.name.slice(-1));
-                if(size == 1){
-                    width = "30px"
-                }
-                else if(size == 2){
-                    width = "45px"
-                }
-                else if(size == 3){
-                    width = "60px"
-                }
-                // let x = Jogo_Da_Velha('Load','','')
-                // if(!x.error){
-                //     $("#Jogo_da_Velha").modal();
-                //     $('#Jogo_da_Velha').on('show.bs.modal', function (event) {
-                //       modal.find('.modal-title').text("Game" + x.key)
-                //     })
-                // }
                 
-                $("#imagem_pokemon").attr('src', "/static/pokemons/"+ response['pokemon'].name + ".gif")
-
+                $("#imagem_pokemon").attr('style', "width:"+ response['pokemon'].width)
+                
                 $("#list").html(listMake(response['list']))
+                
                 $("#health").attr("style", "width: "+ response['health'].toPrecision(3)+"%;");
+                $("#health").text(response['health'].toPrecision(3)+"%");
+                
+                $("#happy").attr("style", "width: "+ response['happy'].toPrecision(3)+"%;");
+                $("#happy").text(response['happy'].toPrecision(3)+"%");
+                
+                $("#hunger").attr("style", "width: "+ response['hunger'].toPrecision(3)+"%;");
+                $("#hunger").text(response['hunger'].toPrecision(3)+"%");
+                
+                $("#age").html(seconds2time(response['age']));
+
                 $("#cenario").attr("style", 
                         "height: 500px;"+
                         "background-size: 100%;"+
                         "background-repeat: no-repeat;"+
                         "background-image: url('/static/cenarios/"+response['pokemon'].cenario+".jpg');");
-                $("#happy").attr("style", "width: "+ response['happy'].toPrecision(3)+"%;");
-                $("#hunger").attr("style", "width: "+ response['hunger'].toPrecision(3)+"%;");
                 // generate_list()
-                setTimeout(loop_load, 1000);
+                newError = 1
+                if(inGame){
+                    setTimeout(loop_load, 10000);
+                }
+                else{
+                    setTimeout(loop_load, 2100);
+                }
 
             },
             error: function(error) {
-                setTimeout(loop_load, 1000);
+                setTimeout(loop_load, 10000* newError);
+                newError +=1
             }
         });
     
 }
-function insert_into_value(to,value){
-    if(to == 'age'){
-        $("#"+to).html(seconds2time(value));
-    }
-    else{
-    $("#"+to).html(value);
-    }
-}
+
 function generate_list() {
     $.ajax(
         {
@@ -80,12 +71,13 @@ function generate_list() {
                                }),
             type: 'POST',
             success: function(response) {
-                let html = "<div class=\"list-group col-sm-12\">"
+                let html = "<div class=\"list-group col-sm-12 container\">"
                 console.log(response)
                 for( let i=0; i<response.games.length; i++){
                     if( response.games[i].player2 == null){
-                        html+="<button class=\"list-group-item\" onclick=\"Jogo_Da_Velha('Join','',"+response.games[i].key+");\">"+
-                        response.games[i].player1 + " vs " + response.games[i].player2 +
+                        html+=
+                        "<button class=\"list-group-item list-group-item-action\" onclick=\"Jogo_Da_Velha('Join','',"+response.games[i].key+");\">"+
+                        "Entrar na partida de "+ response.games[i].player1+
                         "</button>"
                     }
                 }
@@ -149,6 +141,28 @@ function Jogo_Da_Velha_Vitoria(board){
     }
     return false
 }
+function UserReward(money,player1,player2){
+    $.ajax(
+        {
+            dataType: 'json',
+            url: '/reward',
+            data: jQuery.param({
+                    'reward': money,
+                    'player1': player1,
+                    'player2': player2
+            }),
+            success: function(response) {
+                console.log(response)
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        }
+    )
+
+}
+
+
 function Prepare_Jogo_Da_Velha(game,key){
     $.ajax(
         {
@@ -160,7 +174,13 @@ function Prepare_Jogo_Da_Velha(game,key){
             let minha_vez = false
             let adversario = 2
             let player = 1
-            
+            inGame = true
+
+            if(response.idle> 30){
+                inGame = false
+                return
+            }
+
             if (user == game.player2){
                 player = 2
                 adversario = 1
@@ -169,19 +189,37 @@ function Prepare_Jogo_Da_Velha(game,key){
                 if(game.next == game["player"+adversario+"_piece"]){
                     $("#next").html("Vitória do jogador " + game["player"+player] )
                     console.log("Vitoria do jogador",game["player"+player])
+                    alert("Adquirido $ 10,00")
+                    UserReward(10, game["player"+player], null)
                 }
                 else{
                     $("#next").html("Vitória do jogador " + game["player"+adversario] )
+                    UserReward(10, game["player"+adversario], null)
                     console.log("Vitoria do jogador",game["player"+adversario])
                 }
+                inGame = false
             }
             else if(game["player"+adversario] == null){
                 $("#next").html("Aguardando Adversario!")
-                
-                setTimeout( ()=>{
-                    console.log("Aguardando adversario")
-                    Jogo_Da_Velha('Wait','',key)
-                    }, 1000);
+
+                let continua= true
+                for(let i=0;i<3;i++){
+                    for(let j=0;j<3;j++){
+                        if(game.board[i][j] === 'B'){
+                            continua = false
+                        }
+                    }
+                }
+                if(continua){
+                    setTimeout( ()=>{
+                        console.log("Aguardando adversario")
+                        Jogo_Da_Velha('Wait','',key)
+                        }, 1000);
+                    UserReward(5, game["player"+player], game["player"+adversario])
+                }
+                else{
+                    inGame = true
+                }
             }
             else if(game.next == game["player"+player+"_piece"]){
                 minha_vez = true
@@ -201,12 +239,12 @@ function Prepare_Jogo_Da_Velha(game,key){
                     if(minha_vez && value == 'B'){
                         $("#"+linha+coluna).html(
                             "<button onclick=\"Jogo_Da_Velha('Move','" + linha+coluna + "',"+key+");\">"+
-                                value+
+                                "<img class=\"col-sm-12\" src=\"/static/games/"+value+".png\" />"+
                             "</button>"
                         );
                     }
                     else{
-                        $("#"+linha+coluna).html(value);
+                        $("#"+linha+coluna).html("<img class=\"col-sm-12\" src=\"/static/games/"+value+".png\" />");
                     }
                 })
             })
@@ -243,30 +281,6 @@ function Jogo_Da_Velha(comand, param, game_id){
         }
     );
 }
-function getSessionUser(){
-    try{
-
-        user = null
-        $.ajax(
-            {
-                dataType: 'json',
-            url: '/user/get',
-            type: 'POST',
-            success: function(response) {
-                user = response.user
-            },
-            error: function(error) {
-                console.log(error);
-            }
-        }
-        );
-        console.log(user)
-        return user
-    }
-    catch(err){
-        console.error(err)
-    }
-}
 
 function listMake(tamagotchi){
     let test="";
@@ -274,13 +288,13 @@ function listMake(tamagotchi){
         let value= tamagotchi[i]
         if( value.state != 'Morto'){
             test+=
-            "<div class='list-group-item'>"+
+            "<div>"+
                 "<a href='/tamagotchi/"+value.id+"'>"+
                     value.name+
                 "</a>"+
                 "<img"+
                     " onmouseover='bigImg(this)'' onmouseout='normalImg(this)'"+
-                    " src='/static/pokemons/"+value.pokemon+".gif')}}' "+
+                    " src='/static/pokemons/"+value.pokemon.img+".gif')}}' "+
                     " style=' width:32px; margin-rigth:0px'"+
                 " />"+
                 "<button onClick='deleteTamagotchi("+value.id+")' class='close'>"+
