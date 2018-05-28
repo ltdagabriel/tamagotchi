@@ -23,6 +23,9 @@ function loop_load(){
                 $("#imagem_pokemon").attr('style', "width:"+ response['pokemon'].width)
                 
                 $("#list").html(listMake(response['list']))
+                if(response['money']){
+                    $("#money").text("$ "+response['money'].toFixed(2))
+                }
                 
                 $("#health").attr("style", "width: "+ response['health'].toPrecision(3)+"%;");
                 $("#health").text(response['health'].toPrecision(3)+"%");
@@ -151,6 +154,7 @@ function UserReward(money,player1,player2){
                     'player1': player1,
                     'player2': player2
             }),
+            type: 'POST',
             success: function(response) {
                 console.log(response)
             },
@@ -171,6 +175,7 @@ function Prepare_Jogo_Da_Velha(game,key){
         type: 'POST',
         success: function(response) {
             user = response.user
+
             let minha_vez = false
             let adversario = 2
             let player = 1
@@ -185,11 +190,13 @@ function Prepare_Jogo_Da_Velha(game,key){
                 player = 2
                 adversario = 1
             }
+
+
             if (Jogo_Da_Velha_Vitoria(game.board)){
                 if(game.next == game["player"+adversario+"_piece"]){
                     $("#next").html("Vitória do jogador " + game["player"+player] )
                     console.log("Vitoria do jogador",game["player"+player])
-                    alert("Adquirido $ 10,00")
+                    alert("O jogador "+ game["player"+player]+" adquiriu $ 10,00")
                     UserReward(10, game["player"+player], null)
                 }
                 else{
@@ -201,39 +208,43 @@ function Prepare_Jogo_Da_Velha(game,key){
             }
             else if(game["player"+adversario] == null){
                 $("#next").html("Aguardando Adversario!")
-
-                let continua= true
-                for(let i=0;i<3;i++){
-                    for(let j=0;j<3;j++){
-                        if(game.board[i][j] === 'B'){
-                            continua = false
-                        }
-                    }
-                }
-                if(continua){
-                    setTimeout( ()=>{
+                setTimeout( ()=>{
                         console.log("Aguardando adversario")
                         Jogo_Da_Velha('Wait','',key)
                         }, 1000);
-                    UserReward(5, game["player"+player], game["player"+adversario])
-                }
-                else{
-                    inGame = true
-                }
+
+                inGame = true
+
             }
             else if(game.next == game["player"+player+"_piece"]){
                 minha_vez = true
                 console.log(player)
                 $("#next").html("Sua Vez, sua peça " + game.next)
             }
-            else{
+            else {
                 $("#next").html("Aguardando jogador adversario")
-                setTimeout( ()=>{
-                    console.log("Aguardando a vez do jogador ", game["player"+adversario])
-                    Jogo_Da_Velha('Wait','',key)
+
+                let continua = false
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j < 3; j++) {
+                        if (game.board[i][j] === 'B') {
+                            continua = true
+                        }
+                    }
+                }
+                if (continua) {
+                    setTimeout(() => {
+                        console.log("Aguardando adversario")
+                        Jogo_Da_Velha('Wait', '', key)
                     }, 1000);
+                }
+                else {
+                    $("#next").html("A partida resultou em empate")
+                    UserReward(5, game["player" + player], game["player" + adversario])
+                    inGame = false
+
+                }
             }
-            
             game.board.forEach((data,linha)=>{
                 data.forEach((value,coluna)=>{
                     if(minha_vez && value == 'B'){
@@ -286,25 +297,31 @@ function listMake(tamagotchi){
     let test="";
     for (let i = 0; i < tamagotchi.length; i++){
         let value= tamagotchi[i]
-        if( value.state != 'Morto'){
+            let pokemon_nome= value.name
+
+            if (value.name.length > 28)
+                pokemon_nome = value.name.substring(0,25)+ "..."
             test+=
-            "<div>"+
-                "<a href='/tamagotchi/"+value.id+"'>"+
-                    value.name+
-                "</a>"+
-                "<img"+
-                    " onmouseover='bigImg(this)'' onmouseout='normalImg(this)'"+
-                    " src='/static/pokemons/"+value.pokemon.img+".gif')}}' "+
-                    " style=' width:32px; margin-rigth:0px'"+
-                " />"+
-                "<button onClick='deleteTamagotchi("+value.id+")' class='close'>"+
-                    "<span aria-hidden='true'>&times;</span>"+
-                "</button>"+
-            "</div>"
-        }
+                " <div class=\"col-sm-2 col-md-2\">\n" +
+                "    <div class=\"thumbnail\" style=\"height:100%\">\n" +
+                "      <a href=\"/tamagotchi/"+value.id+"\">" +
+                "          <div class='text-center text-uppercase' >"+value.state+"</div>"+
+                "        <div class='text-center' style='height: 80px;'>" +
+                "          <img class='media-object' src=\"/static/pokemons/"+value.pokemon.img+"\" style=\"position: absolute; bottom: 100px; left: 25%; right: 25%;\" alt="+value.pokemon.nome+">\n" +
+                "        </div>"+
+                "      </a>\n" +
+                "        <div class=\"caption\">\n" +
+                "          <a href=\"/tamagotchi/"+value.id+"\">" +
+                "            <h5>"+pokemon_nome+"</h5>\n" +
+                "          </a>\n" +
+                "          <p><button onClick=\"deleteTamagotchi("+value.id+")\" class=\"btn btn-primary btn-sm\" role=\"button\">Remover</button></p>"+
+                "        </div>\n" +
+                "    </div>" +
+                "  </div>"
     }
     return test
 }
+
 function deleteTamagotchi(id){
     $.ajax(
         {

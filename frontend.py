@@ -36,10 +36,17 @@ class ConnectDatabase:
             self.users = []
             self.games = []
             self.taxa = 1
+            self.loja = [
+                {'nome': 'Lugia', 'price': 500.0},
+                {'nome': 'Mewtwo', 'price': 700.0},
+                {'nome': 'Onix', 'price': 100.0},
+                {'nome': 'Pichu', 'price': 100.0},
+                {'nome': 'Munchlax', 'price': 100.0}
+            ]
             self.pokemons = [
                 {
                     'img':"Bulbasaur.gif", 
-                    'width':'200px',
+                    'width':'120px',
                     'nome': 'Bulbasaur',
                     'time': 30*60,
                     'evolucao':'Ivysaur',
@@ -48,7 +55,7 @@ class ConnectDatabase:
                 },
                 {
                     'img':"ivysaur.gif", 
-                    'width':'170px',
+                    'width':'150px',
                     'nome': 'Ivysaur',
                     'time': 60*60,
                     'evolucao':'Venusaur',
@@ -57,7 +64,7 @@ class ConnectDatabase:
                 },
                 {
                     'img': "venusaur.gif", 
-                    'width': '220px',
+                    'width': '200px',
                     'nome': 'Venusaur',
                     'evolucao': None,
                     'peso': '100.0 Kg', 
@@ -114,8 +121,102 @@ class ConnectDatabase:
                     'evolucao': None,
                     'peso': '85.5 Kg', 
                     'altura':'1.6 m' 
+                },
+                {
+                    'img': "blastoise-mega.gif",
+                    'width': '170px',
+                    'nome': 'Blastoise',
+                    'evolucao': None,
+                    'peso': '85.5 Kg',
+                    'altura':'1.6 m'
+                },
+                {
+                    'img': "lugia.gif",
+                    'width': '170px',
+                    'nome': 'Lugia',
+                    'evolucao': None,
+                    'peso': '216.0 Kg',
+                    'altura': '5.2 m'
+                },
+                {
+                    'img': "mewtwo.gif",
+                    'width': '130px',
+                    'nome': 'Mewtwo',
+                    'evolucao': None,
+                    'peso': '122.0 Kg',
+                    'altura': '2.0 m'
+                },
+                {
+                    'img': "onix.gif",
+                    'width': '130px',
+                    'nome': 'Onix',
+                    'evolucao': 'Steelix',
+                    'peso': '210.0 Kg',
+                    'altura': '8.8 m'
+                },
+                {
+                    'img': "steelix.gif",
+                    'width': '150px',
+                    'nome': 'Steelix',
+                    'evolucao': None,
+                    'peso': '400.0 Kg',
+                    'altura': '9.2 m'
+                },
+                {
+                    'img': "pichu.gif",
+                    'width': '100px',
+                    'nome': 'Pichu',
+                    'evolucao': "Pikachu",
+                    'peso': '2.0 Kg',
+                    'altura': '0.3 m'
+                },
+                {
+                    'img': "pikachu.gif",
+                    'width': '130px',
+                    'nome': 'Pikachu',
+                    'evolucao': "Raichu",
+                    'peso': '6.0 Kg',
+                    'altura': '0.4 m'
+                },
+                {
+                    'img': "raichu-3.gif",
+                    'width': '150px',
+                    'nome': 'Raichu',
+                    'evolucao': None,
+                    'peso': '30.0 Kg',
+                    'altura': '0.8 m'
+                },
+                {
+                    'img': "munchlax.gif",
+                    'width': '100px',
+                    'nome': 'Munchlax',
+                    'evolucao': 'Snorlax',
+                    'peso': '105.0 Kg',
+                    'altura': '0.6 m'
+                },
+                {
+                    'img': "snorlax.gif",
+                    'width': '200px',
+                    'nome': 'Snorlax',
+                    'evolucao': None,
+                    'peso': '460.0 Kg',
+                    'altura': '2.1 m'
                 }
             ]
+
+        def GetSalePokemons(self):
+            sales = []
+            for x in self.loja:
+                for y in self.pokemons:
+                    if x['nome'] == y['nome']:
+                        z = y
+                        z.update(x)
+
+                        sales.append(z)
+                        break
+
+            return sales
+
 
         def GetPokemonFile(self, name):
             for pokemon in self.pokemons:
@@ -197,7 +298,8 @@ class ConnectDatabase:
         def engineTamagotchi(self, id=None):
             if id:
                 value = self.getTamagotchi(id)
-
+                if not value:
+                    return
                 if value.tamagotchi.state == 'Morto':
                     return
 
@@ -312,6 +414,8 @@ class ConnectDatabase:
         def DeleteTamagotchi(self, id):
             s = sessionmaker(bind=engine)()
             tama = s.query(Tamagotchi).filter(Tamagotchi.id.in_([int(id)])).first()
+            index= self.getTamagotchiIndex(id=id)
+            del self.tamagotchis[index]
             s.delete(tama)
             s.commit()
             return True
@@ -400,13 +504,13 @@ class ConnectDatabase:
         def RedirectIndex(self):
             return redirect(url_for('.index'))
 
-        def UserReward(self,size,username):
+        def UserReward(self, size, username):
             session = sessionmaker(bind=engine)()
 
-            user = session.query(User).filter(User.username.in_([username]))
+            user = session.query(User).filter(User.username.in_([username])).first()
             user.money = user.money + size
-
             session.commit()
+
 
         def Login(self, username=None, password=None):
             if username and password:
@@ -588,7 +692,6 @@ def novotamagotchi():
 @frontend.route('/')
 def index():
     DB = ConnectDatabase()
-    DB.initTamagotchis()
     user = DB.getSessionUser()
     if not user:
         return render_template('login.html')
@@ -605,9 +708,9 @@ def Reward():
     DB = ConnectDatabase()
     player1 = str(request.form['player1'])
     player2 = str(request.form['player2'])
-    DB.UserReward(int(request.form['reward']),player1)
+    DB.UserReward(int(request.form['reward']), player1)
     if player2:
-        DB.UserReward(int(request.form['reward']),player2)
+        DB.UserReward(int(request.form['reward']), player2)
         
     return jsonify({'success': 'usuario recebeu sua recompensa!'})
 
@@ -660,13 +763,14 @@ def games():
 @frontend.route('/tamagotchi/<id>')
 def home(id=None):
     DB = ConnectDatabase()
-    DB.initTamagotchis()
     if id:
         user = DB.getSessionUser()
+        pokemons = DB.GetSalePokemons()
         if user:
             return render_template('index.html',
                                    tamagotchis=DB.AllTamagotchis(user_id=user.id),
-                                   tamagotchi=DB.MyTamagotchis(int(id)))
+                                   tamagotchi=DB.MyTamagotchis(int(id)),
+                                   pokemons=pokemons)
         else:
             return DB.RedirectIndex()
     else:
