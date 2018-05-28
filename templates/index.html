@@ -17,13 +17,14 @@
                 </div>
             {%- endif %}
         {%- endwith %}
-        <div class="row col-sm-12">
-            <div class="col-sm-11 row">
+        <div class=" col-sm-12">
+            <div class="col-sm-12">
                 {%- if tamagotchi %}
-                    <div class="col-sm-6 text-uppercase text-left"><h3 id="name">{{tamagotchi.name}}</h3></div>
-                    <div class="col-sm-6 text-right"><h3 id="age">{{ tamagotchi.last_update - tamagotchi.birthday }}</h3></div>
-
-                    <div class="row" ondragover="allowDrop(event)">
+                    <div class="col-sm-12">
+                      <div class="col-sm-6 text-uppercase text-left"><h3 id="name">{{tamagotchi.name}}</h3></div>
+                      <div class="col-sm-6 text-right"><h3 id="age">{{ tamagotchi.last_update - tamagotchi.birthday }}</h3></div>
+                    </div>
+                    <div class="row col-sm-10" ondragover="allowDrop(event)">
                         <div
                            class="col-sm-12 col-md-12 col-sm-12" id="cenario"
 
@@ -111,16 +112,32 @@
 
                             </div>
                         </div>
+                    
+                    <div class="col-sm-2 container-fluid" style="border: 1px solid #0076a3; box-shadow: 5px 5px 10px #0076a3; -webkit-box-shadow: 5px 5px 10px #0076a3; -moz-box-shadow: 5px 5px 10px #0076a3; margin-left:30px">
+                        <div class="col-sm-12 container-fluid" style="border-bottom: 1px solid black ">
+                          <div class="col-sm-4">
+                            <img style="width: 20px; padding-top: 8px" src="/static/icones/pokebola.png"/>
+                          </div>
+                          <div class="col-sm-8  text-center"><h5>Online</h5></div>
+                        </div>
+                         <div class="col-sm-12">
+                           {% for online in logados %}
+                             <div class="col-sm-12 text-center" style="margin-top: 10px">
+                                <div class="col-sm-6">
+                                  {{ online.user.username }}
+                                </div>
+                                <div class="col-sm-6 text-right">
+                                  <img style="width: 20px; height: 20px" src="/static/personagens/{{online.user.imagem}}"/>
+                                </div>
+                             </div>
+                           {% endfor %}
+                         </div>
+                    </div>
                     <div id="id_tamagotchi" class="collapse">{{ tamagotchi.id }}</div>
 
                     </div>
-                    <div class="col-sm-1">
-                                      <li>
-                                        {% for user in logados %}
-                                          <ul>{{ user.username }}</ul>
-                                        {% endfor %}
-                                      </li>
-                                    </div>
+
+                    
                     <!-- Button trigger modal -->
                     
                     

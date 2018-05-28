@@ -267,17 +267,17 @@ class ConnectDatabase:
 
         def getUserIndex(self, username):
             for i in range(len(self.users)):
-                if self.users[i].username == username:
+                if self.users[i].user.username == username:
                     return i
             return None
 
-        def updateUser(self, username):
-            index = self.getUserIndex(username)
+        def updateUser(self, user):
+            index = self.getUserIndex(user.username)
             if isinstance(index, int):
                 self.users[index].time = datetime.now()
 
             else:
-                self.users.append(type('obj', (object,), {'username': username, 'time': datetime.now()}))
+                self.users.append(type('obj', (object,), {'user': user, 'time': datetime.now()}))
 
         def setTamagotchiHistory(self, id=None, health=0.0, happy=0.0, hunger=0.0):
             index = self.getTamagotchiIndex(id=id)
@@ -430,10 +430,10 @@ class ConnectDatabase:
         def getSessionUser(self):
             if 'username' in session:
                 username = str(session.get('username'))
-                self.updateUser(username)
-                user = list(sessionmaker(bind=engine)().query(User).filter(User.username.in_([username])))
-                if len(user):
-                    return user[0]
+                user = list(sessionmaker(bind=engine)().query(User).filter(User.username.in_([username])))[0]
+                self.updateUser(user)
+                if user:
+                    return user
             return None
 
         def MyTamagotchis(self, id=None, dead=False):
@@ -446,10 +446,10 @@ class ConnectDatabase:
             if tama:
                 return tama.tamagotchi
 
-        def CreateUser(self, username, password):
+        def CreateUser(self, username, password, imagem):
 
             s = sessionmaker(bind=engine)()
-            user = User(username, password)
+            user = User(username, password, imagem)
 
             s.add(user)
             s.commit()
@@ -795,7 +795,8 @@ def cadastro():
         DB = ConnectDatabase()
         DB.CreateUser(
             str(request.form['username']),
-            str(request.form['password'])
+            str(request.form['password']),
+            str(request.form['persona']),
         )
 
         return DB.RedirectIndex()
