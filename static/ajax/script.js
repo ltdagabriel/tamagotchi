@@ -1,5 +1,10 @@
 
-$(document).ready(loop_load())
+$(document).ready(()=>{
+    loop_load()
+})
+
+var inGame = false
+var newError = 1
 
 function loop_load(){
     
@@ -13,76 +18,310 @@ function loop_load(){
                 let error=response['error']
                 if (error){
                     console.log(error)
-                    location.href = "/"
                 }
-                Object.keys(response).forEach((value)=>{
-                    insert_into_value(value,response[value])
-                });
-                let width = "30px";
-                let size= Number(response.pokemon.name.slice(-1));
-                if(size == 1){
-                    width = "30px"
-                }
-                else if(size == 2){
-                    width = "45px"
-                }
-                else if(size == 3){
-                    width = "60px"
-                }
-
                 
-                $("#imagem_pokemon").html(
-                    "<img style='width:"+width+";' "+
-                    "onmouseover='bigImg(this)' onmouseout='normalImg(this)'"+
-                    "src='/static/pokemons/"+response['pokemon'].name +".gif' />");
+                $("#imagem_pokemon").attr('style', "width:"+ response['pokemon'].width)
+                
                 $("#list").html(listMake(response['list']))
+                if(response['money']){
+                    $("#money").text("$ "+response['money'].toFixed(2))
+                }
+                
                 $("#health").attr("style", "width: "+ response['health'].toPrecision(3)+"%;");
+                $("#health").text(response['health'].toPrecision(3)+"%");
+                
+                $("#happy").attr("style", "width: "+ response['happy'].toPrecision(3)+"%;");
+                $("#happy").text(response['happy'].toPrecision(3)+"%");
+                
+                $("#hunger").attr("style", "width: "+ response['hunger'].toPrecision(3)+"%;");
+                $("#hunger").text(response['hunger'].toPrecision(3)+"%");
+                
+                $("#age").html(seconds2time(response['age']));
+
                 $("#cenario").attr("style", 
                         "height: 500px;"+
                         "background-size: 100%;"+
                         "background-repeat: no-repeat;"+
                         "background-image: url('/static/cenarios/"+response['pokemon'].cenario+".jpg');");
-                $("#happy").attr("style", "width: "+ response['happy'].toPrecision(3)+"%;");
-                $("#hunger").attr("style", "width: "+ response['hunger'].toPrecision(3)+"%;");
-                 setTimeout(loop_load, 1000);
+                // generate_list()
+                newError = 1
+                if(inGame){
+                    setTimeout(loop_load, 10000);
+                }
+                else{
+                    setTimeout(loop_load, 2100);
+                }
+
             },
             error: function(error) {
-                setTimeout(loop_load, 1000);
+                setTimeout(loop_load, 10000* newError);
+                newError +=1
             }
         });
     
 }
-function insert_into_value(to,value){
-    if(to == 'age'){
-        $("#"+to).html(seconds2time(value));
-    }
-    else{
-    $("#"+to).html(value);
-    }
+
+function generate_list() {
+    $.ajax(
+        {
+            dataType: 'json',
+            url: '/games/jogo_da_velha',
+            data: jQuery.param({
+                                'game_name': 'Jogo_da_Velha',
+                                'comand': 'All',
+                                'param': '',
+                                'game':''
+                               }),
+            type: 'POST',
+            success: function(response) {
+                let html = "<div class=\"list-group col-sm-12 container\">"
+                console.log(response)
+                for( let i=0; i<response.games.length; i++){
+                    if( response.games[i].player2 == null){
+                        html+=
+                        "<button class=\"list-group-item list-group-item-action\" onclick=\"Jogo_Da_Velha('Join','',"+response.games[i].key+");\">"+
+                        "Entrar na partida de "+ response.games[i].player1+
+                        "</button>"
+                    }
+                }
+                html+="</div>"
+                $("#game_list").html(html);
+                console.log(response)
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        }
+    );
 }
+function Jogo_Da_Velha_Vitoria(board){
+    let linha = 1
+    let anterior_linha = null
+    let coluna = 1
+    let anterior_coluna = null
+    let diagonal1 = 1
+    let diagonal2 = 1
+    let anterior_diagonal1 = null
+    let anterior_diagonal2 = null
+
+    for(let i=0;i<board.length;i++){
+        if (!anterior_diagonal1)
+            anterior_diagonal1 = board[i][i]
+        else if(anterior_diagonal1 == board[i][i]){
+            diagonal1++
+        }
+        if (!anterior_diagonal2)
+                anterior_diagonal2 = board[2-i][2-i]
+        else if(anterior_diagonal2 == board[2-i][2-i]){
+            diagonal2++
+        }
+
+
+        linha = 1
+        anterior_linha = null
+        coluna = 1
+        anterior_coluna = null
+
+        for(let j=0;j<board[i].length;j++){
+            if (!anterior_linha)
+                anterior_linha = board[i][j]
+            else if(anterior_linha == board[i][j]){
+                linha++
+            }
+            if (!anterior_coluna)
+                anterior_coluna = board[j][i]
+            else if(anterior_coluna == board[j][i]){
+                coluna++
+            }
+        }
+        if((linha==3 && anterior_linha != 'B') || (coluna==3 && anterior_coluna != 'B')){
+            return true
+        }
+
+    }
+    if((diagonal1==3 && anterior_diagonal1 != 'B') || (diagonal2==3 && anterior_diagonal2 != 'B')){
+        return true
+    }
+    return false
+}
+function UserReward(money,player1,player2){
+    $.ajax(
+        {
+            dataType: 'json',
+            url: '/reward',
+            data: jQuery.param({
+                    'reward': money,
+                    'player1': player1,
+                    'player2': player2
+            }),
+            type: 'POST',
+            success: function(response) {
+                console.log(response)
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        }
+    )
+
+}
+
+
+function Prepare_Jogo_Da_Velha(game,key){
+    $.ajax(
+        {
+            dataType: 'json',
+        url: '/user/get',
+        type: 'POST',
+        success: function(response) {
+            user = response.user
+
+            let minha_vez = false
+            let adversario = 2
+            let player = 1
+            inGame = true
+
+            if(response.idle> 30){
+                inGame = false
+                return
+            }
+
+            if (user == game.player2){
+                player = 2
+                adversario = 1
+            }
+
+
+            if (Jogo_Da_Velha_Vitoria(game.board)){
+                if(game.next == game["player"+adversario+"_piece"]){
+                    $("#next").html("Vitória do jogador " + game["player"+player] )
+                    console.log("Vitoria do jogador",game["player"+player])
+                    alert("O jogador "+ game["player"+player]+" adquiriu $ 10,00")
+                    UserReward(10, game["player"+player], null)
+                }
+                else{
+                    $("#next").html("Vitória do jogador " + game["player"+adversario] )
+                    UserReward(10, game["player"+adversario], null)
+                    console.log("Vitoria do jogador",game["player"+adversario])
+                }
+                inGame = false
+            }
+            else if(game["player"+adversario] == null){
+                $("#next").html("Aguardando Adversario!")
+                setTimeout( ()=>{
+                        console.log("Aguardando adversario")
+                        Jogo_Da_Velha('Wait','',key)
+                        }, 1000);
+
+                inGame = true
+
+            }
+            else if(game.next == game["player"+player+"_piece"]){
+                minha_vez = true
+                console.log(player)
+                $("#next").html("Sua Vez, sua peça " + game.next)
+            }
+            else {
+                $("#next").html("Aguardando jogador adversario")
+
+                let continua = false
+                for (let i = 0; i < 3; i++) {
+                    for (let j = 0; j < 3; j++) {
+                        if (game.board[i][j] === 'B') {
+                            continua = true
+                        }
+                    }
+                }
+                if (continua) {
+                    setTimeout(() => {
+                        console.log("Aguardando adversario")
+                        Jogo_Da_Velha('Wait', '', key)
+                    }, 1000);
+                }
+                else {
+                    $("#next").html("A partida resultou em empate")
+                    UserReward(5, game["player" + player], game["player" + adversario])
+                    inGame = false
+
+                }
+            }
+            game.board.forEach((data,linha)=>{
+                data.forEach((value,coluna)=>{
+                    if(minha_vez && value == 'B'){
+                        $("#"+linha+coluna).html(
+                            "<button onclick=\"Jogo_Da_Velha('Move','" + linha+coluna + "',"+key+");\">"+
+                                "<img class=\"col-sm-12\" src=\"/static/games/"+value+".png\" />"+
+                            "</button>"
+                        );
+                    }
+                    else{
+                        $("#"+linha+coluna).html("<img class=\"col-sm-12\" src=\"/static/games/"+value+".png\" />");
+                    }
+                })
+            })
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    }
+    );
+    
+}
+
+function Jogo_Da_Velha(comand, param, game_id){
+    $.ajax(
+        {
+            dataType: 'json',
+            url: '/games/jogo_da_velha',
+            data: jQuery.param({
+                                'game_name': 'Jogo_da_Velha',
+                                'comand': comand,
+                                'param': param,
+                                'game':game_id
+                               }),
+            type: 'POST',
+            success: function(response) {
+                if(response.game){
+                    console.log(response)
+                    Prepare_Jogo_Da_Velha(response.game,response.key)
+                }
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        }
+    );
+}
+
 function listMake(tamagotchi){
     let test="";
     for (let i = 0; i < tamagotchi.length; i++){
         let value= tamagotchi[i]
-        if( value.state != 'Morto'){
+            let pokemon_nome= value.name
+
+            if (value.name.length > 28)
+                pokemon_nome = value.name.substring(0,25)+ "..."
             test+=
-            "<div class='list-group-item'>"+
-                "<a href='/tamagotchi/"+value.id+"'>"+
-                    value.name+
-                "</a>"+
-                "<img"+
-                    " onmouseover='bigImg(this)'' onmouseout='normalImg(this)'"+
-                    " src='/static/pokemons/"+value.pokemon+".gif')}}' "+
-                    " style=' width:32px; margin-rigth:0px'"+
-                " />"+
-                "<button onClick='deleteTamagotchi("+value.id+")' class='close'>"+
-                    "<span aria-hidden='true'>&times;</span>"+
-                "</button>"+
-            "</div>"
-        }
+                " <div class=\"col-sm-2 col-md-2\">\n" +
+                "    <div class=\"thumbnail\" style=\"height:100%\">\n" +
+                "      <a href=\"/tamagotchi/"+value.id+"\">" +
+                "          <div class='text-center text-uppercase' >"+value.state+"</div>"+
+                "        <div class='text-center' style='height: 80px;'>" +
+                "          <img class='media-object' src=\"/static/pokemons/"+value.pokemon.img+"\" style=\"position: absolute; bottom: 100px; left: 25%; right: 25%;\" alt="+value.pokemon.nome+">\n" +
+                "        </div>"+
+                "      </a>\n" +
+                "        <div class=\"caption\">\n" +
+                "          <a href=\"/tamagotchi/"+value.id+"\">" +
+                "            <h5>"+pokemon_nome+"</h5>\n" +
+                "          </a>\n" +
+                "          <p><button onClick=\"deleteTamagotchi("+value.id+")\" class=\"btn btn-primary btn-sm\" role=\"button\">Remover</button></p>"+
+                "        </div>\n" +
+                "    </div>" +
+                "  </div>"
     }
     return test
 }
+
 function deleteTamagotchi(id){
     $.ajax(
         {
@@ -121,7 +360,20 @@ function drop(ev, id) {
 }
 function tamagotchiActions(action,value,id){
     // alert("/tamagotchi/"+id+"/"+action+"/"+value)
-    location.href = "/tamagotchi/"+id+"/"+action+"/"+value
+    $.ajax(
+        {
+            dataType: 'json',
+            url: '/tamagotchi/update/'+action,
+            data: jQuery.param({'id': id, 'value': value}),
+            type: 'POST',
+            success: function(response) {
+                console.log(response)
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        }
+    );
 }
 
 function seconds2time (time) {

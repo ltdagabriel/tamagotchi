@@ -3,7 +3,6 @@
 
 
  {% import "bootstrap/utils.html" as utils %}
- 
  {% block content %}
    <div class="container">
     <audio id="music" src="{{ url_for('static', filename='songs/Pokemon-Tema.mp3')}}" preload="auto" autoplay loop>
@@ -19,7 +18,7 @@
             {%- endif %}
         {%- endwith %}
         <div class="row">
-            <div class="col-sm-9 col-md-10">
+            <div class="col-sm-12 col-md-12">
                 {%- if tamagotchi %}
                     <div class="col-sm-6 text-uppercase text-left"><h3 id="name">{{tamagotchi.name}}</h3></div>
                     <div class="col-sm-6 text-right"><h3 id="age">{{ tamagotchi.last_update - tamagotchi.birthday }}</h3></div>
@@ -30,7 +29,6 @@
 
                            style="
                                height: 500px;
-                               background-color: aqua;
                                background-size: 100%;
                                background-repeat: no-repeat;
                                background-image: url({{ url_for('static', filename='cenarios/default.jpg') }});
@@ -47,6 +45,7 @@
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
                                 <div class="col-sm-4" style="margin-top: 10px">
                                     <div class="col-sm-2">
@@ -56,6 +55,14 @@
                                          <div class="progress">
                                             <div id="happy" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: {{tamagotchi.happy}}%;">
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12" style="height: 450px;">
+                                        <div class="col-sm-12" style="height: 200px"></div>
+                                        <div ondrop="drop(event,{{ tamagotchi.id }})" class="col-sm-12 text-center" >
+                                            <img    id="imagem_pokemon"
+                                                    style="width: 100%"
+                                                    src="{{url_for('static', filename='pokemons/'+tamagotchi.name_pokemon+'.gif')}}" >
                                         </div>
                                     </div>
                                 </div>
@@ -69,45 +76,39 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="col-sm-12">
+                                        <div class="col-sm-12" style="float: right">
+                                            <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="health_10" ondragstart="drag(event)"  src="{{url_for('static', filename='icones/seringa.png')}}" draggable="true" / >
+                                        </div>
+                                        <div class="col-sm-12" style="float: right">
+                                            <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="hunger_10" ondragstart="drag(event)"  src="{{url_for('static', filename='icones/maca.png')}}" draggable="true" / >
+                                        </div>
+                                        <div class="col-sm-12" style="float: right">
+                                            <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="happy_10" ondragstart="drag(event)"  src="{{url_for('static', filename='icones/bola.png')}}" draggable="true" / >
+                                        </div>
+
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-sm-12" style="height:350px">
-                            <div class="col-sm-8" style="height:300px"></div>
-                            <div class="col-sm-2" style="height:300px"></div>
-                            <div class="col-sm-2">
-                                <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="health_10" ondragstart="drag(event)"  src="{{url_for('static', filename='icones/seringa.png')}}" draggable="true" / >
-                            </div>
-                            <div class="col-sm-2">
-                                <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="hunger_10" ondragstart="drag(event)"  src="{{url_for('static', filename='icones/maca.png')}}" draggable="true" / >
-                            </div>
-                            <div class="col-sm-2">
-                                <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="happy_10" ondragstart="drag(event)"  src="{{url_for('static', filename='icones/bola.png')}}" draggable="true" / >
-                            </div>
-                            </div>
-                            <div class="col-sm-4">
-                                
-                            </div>
-                            <div id="imagem_pokemon" ondrop="drop(event,{{ tamagotchi.id }})" class="col-sm-4 text-center" >
-                                <img
-                                        onmouseover="bigImg(this)" onmouseout="normalImg(this)"
-                                        style="width: 15%; height: 15%"
-                                        src="{{url_for('static', filename='pokemons/'+tamagotchi.name_pokemon+'.gif')}}" >
-                            </div>
-                            <div class="col-sm-12">
-                                <div class="col-sm-4">
-                                        
-                                </div>
-                                <div class="col-sm-4"></div>
-                                <div class="col-sm-4">
-                                    <button type="button" class="btn btn-default" data-toggle="modal" data-target="#myModal" style="position: relative; margin-left: 90%; float: bottom;top: 50%">
-                                        Loja
-                                    </button>
+                                <div class="col-sm-12">
+                                    <div class="text-left col-sm-12 btn-group-sm" style="position: absolute; margin-top: -50px">
+                                        <button type="button" class="btn btn-primary-outline" data-toggle="modal" data-target="#Jogo_da_Velha">
+                                            <img style="width: 30px;" src="{{url_for('static', filename='icones/hash.png')}}" >
+                                        </button>
+                                        <button type="button" class="btn btn-primary-outline" data-toggle="modal" data-target="#myModal" >
+                                            Loja
+                                        </button>
+                                        <div style="color: lime; float: right">
+                                            <h5 id="money">$ 0.00</h5>
+                                        </div>
+                                    </div>
+
+                                    <div id="list" class="col-sm-12 col-md-12 row">
+                                    </div>
+
                                 </div>
                             </div>
 
-                            <!-- Split dropup button -->
-                            
-
+                            </div>
                         </div>
                     <div id="id_tamagotchi" class="collapse">{{ tamagotchi.id }}</div>
 
@@ -115,77 +116,88 @@
                     <!-- Button trigger modal -->
                     
                     
-                    <!-- Modal -->
-                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
+                    {%- endif %}
+                </div>
+                
+                
+                <!-- Modal Loja -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+
+                        <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             <h4 class="modal-title" id="myModalLabel">Loja</h4>
-                          </div>
-                          <div class="modal-body">
-                            <ul class="list-group text-center">
-                                <p>Pikachu</p>
-                                <label class="radio-inline">
-                                     <input type="radio" name="poke" id="pikachu" value="pikachu" checked>
-                                     <img src="{{url_for('static', filename='pokemons/pikachu.gif')}}">
-                                </label>
-                            </ul>
-                            <ul class="list-group text-center">
-                                <p>Dragonite</p>
-                                <label class="radio-inline">
-                                     <input type="radio" name="poke" id="dragonite" value="dragonite" checked>
-                                     <img src="{{url_for('static', filename='pokemons/dragonite.gif')}}">
-                                </label>
-                            </ul>
-                            <ul class="list-group text-center">
-                                <p>Lugia</p>
-                                <label class="radio-inline">
-                                     <input type="radio" name="poke" id="lugia" value="lugia" checked>
-                                     <img src="{{url_for('static', filename='pokemons/lugia.gif')}}">
-                                </label>
-                            </ul>
-                            <ul class="list-group text-center">
-                                <p>Onix</p>
-                                <label class="radio-inline">
-                                     <input type="radio" name="poke" id="onix" value="onix" checked>
-                                     <img src="{{url_for('static', filename='pokemons/onix.gif')}}">
-                                </label>
-                            </ul>
-                            <ul class="list-group text-center">
-                                <p>Snorlax</p>
-                                <label class="radio-inline">
-                                     <input type="radio" name="poke" id="snorlax" value="snorlax" checked>
-                                     <img src="{{url_for('static', filename='pokemons/snorlax.gif')}}">
-                                </label>
-                            </ul>
-                            <ul class="list-group text-center">
-                                <p>Mewtwo</p>
-                                <label class="radio-inline">
-                                     <input type="radio" name="poke" id="mewtwo" value="mewtwo" checked>
-                                     <img src="{{url_for('static', filename='pokemons/mewtwo.gif')}}">
-                                </label>
-                            </ul>
+                        </div>
+                          <div class="modal-body col-sm-12">
+                              {% for pokemon in pokemons %}
+                                <form action="/tamagotchi/buy" class="col-sm-4 thumbnail" method="post">
+                                  <ul class="list-group col-sm-12" style="height: 120px">
+                                    <input type="hidden" name="price" id="price" value={{ pokemon.price }}>
+
+                                      <input type="hidden" name="poke" id="poke" value="{{ pokemon.nome }}">
+                                      <img style="position: absolute; bottom: 0; left: 25%; right: 25%" src="{{url_for('static', filename='pokemons/'+pokemon.img)}}">
+
+                                  </ul>
+                                    <div class="col-sm-12 text-center">
+                                        <p style="color: #2980B9">{{ pokemon.nome }}</p>
+                                        <p style="color: lime">$ {{ pokemon.price }}</p>
+                                        <button type="submit" onclick="location.href='/'" class="btn btn-primary">Comprar</button>
+                                    </div>
+                                </form>
+                              {% endfor %}
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-                            <button type="submit" onclick="location.href='/'" class="btn btn-primary">Comprar</button>
                           </div>
-                        </div>
-                      </div>
+
                     </div>
-                {%- endif %}
-            </div>
-            <div class="col-sm-3 col-md-2">
-                <ul id="list" class="list-group text-center">
-                {% for tama in tamagotchis %}
-                <div class="list-group-item">
-                    <a href="/tamagotchi/{{tama.id}}">{{ tama.name }}</a>
-                    
-                    <img src="{{url_for('static', filename='pokemons/'+tama.name_pokemon+'.gif')}}"  style=" width:30px; margin-rigth:0px" >
+                  </div>
                 </div>
-                {% endfor %}
-                </ul>
+
+                <!-- Modal Jogo da Velha -->
+            <div class="modal fade bs-example-modal-lg" id="Jogo_da_Velha" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="next">Jogo_Da_Velha</h4>
+                  </div>
+                  <div class="modal-body col-sm-12">
+
+                    <div class="col-sm-6">
+                      <table cellpadding="10" class="col-sm-12 text-center text-uppercase">
+                          <tr>
+                            <th id="00"><img class="col-sm-12" src="/static/games/B.png" /></th>
+                            <th id="01"><img class="col-sm-12" src="/static/games/B.png" /></th>
+                            <th id="02"><img class="col-sm-12" src="/static/games/B.png" /></th>
+                          </tr>
+                          <tr>
+                            <th id="10"><img class="col-sm-12" src="/static/games/B.png" /></th>
+                            <th id="11"><img class="col-sm-12" src="/static/games/B.png" /></th>
+                            <th id="12"><img class="col-sm-12" src="/static/games/B.png" /></th>
+                          </tr>
+                          <tr>
+                            <th id="20"><img class="col-sm-12" src="/static/games/B.png" /></th>
+                            <th id="21"><img class="col-sm-12" src="/static/games/B.png" /></th>
+                            <th id="22"><img class="col-sm-12" src="/static/games/B.png" /></th>
+                          </tr>
+                      </table>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <button onclick="Jogo_Da_Velha('New','','');">New game</button>
+                        <button onclick="generate_list();">Enter Game</button>
+
+                        <div id="game_list" class="col-sm-12 row">
+                        </div>
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
             </div>
         </div>
     </div>

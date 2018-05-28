@@ -14,6 +14,7 @@ class User(Base):
     __tablename__ = "users"
  
     id = Column(Integer, primary_key=True)
+    money = Column(Float, default=0)
     username = Column(String)
     password = Column(String)
  
@@ -50,17 +51,30 @@ class Pokemon(Base):
     """"""
     __tablename__ = "pokemons"
     id = Column(Integer, primary_key=True)
-    name = Column(String)
+    
+    width = Column(String, default='80px')
+    img = Column(String)
+    
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    
+
+    nome = Column(String)
+    altura = Column(String)
+    peso = Column(String)
+    evolucao = Column(String)
+
     cenario = Column(String, default='default')
-    dafault = Column(Boolean)
 
     
-    def __init__(self, name, user_id, default=False):
+    def __init__(self, img, width, nome, altura, peso, evolucao, user_id):
         """"""
-        self.name = name
+        self.nome = nome
+        self.img = img
+        self.width = width
+        self.altura = altura
+        self.peso = peso
+        self.evolucao = evolucao
         self.user_id = user_id
-        self.default = default
  
 
 
