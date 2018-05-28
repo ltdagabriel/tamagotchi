@@ -17,12 +17,14 @@ class User(Base):
     money = Column(Float, default=0)
     username = Column(String)
     password = Column(String)
+    imagem = Column(String)
  
     #----------------------------------------------------------------------
-    def __init__(self, username, password):
+    def __init__(self, username, password, imagem):
         """"""
         self.username = username
         self.password = password
+        self.imagem = imagem
  
 class Tamagotchi(Base):
     """"""
