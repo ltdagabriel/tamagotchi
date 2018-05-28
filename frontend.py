@@ -273,7 +273,7 @@ class ConnectDatabase:
 
         def updateUser(self, username):
             index = self.getUserIndex(username)
-            if index:
+            if isinstance(index, int):
                 self.users[index].time = datetime.now()
 
             else:
@@ -346,6 +346,13 @@ class ConnectDatabase:
                         value.tamagotchi.name_pokemon = mypoke['evolucao']
 
                 self.SaveTamagotchi(id)
+
+        def getOnlineUser(self):
+            user = []
+            for x in self.users:
+                if (datetime.now() - x.time).total_seconds() < 5*60:
+                    user.append(x)
+            return user
 
         def getDatabaseTamagotchi(self, id):
             s = sessionmaker(bind=engine)()
@@ -577,7 +584,7 @@ class ConnectDatabase:
                                 'game': self.games[key].get()})
 
             if comand == 'All':
-                return jsonify({'games': map(lambda (x): x.get(), self.games)})
+                return jsonify({'games': map(lambda x: x.get(), self.games)})
 
     instance = None
 
@@ -766,11 +773,13 @@ def home(id=None):
     if id:
         user = DB.getSessionUser()
         pokemons = DB.GetSalePokemons()
+
+       
         if user:
             return render_template('index.html',
                                    tamagotchis=DB.AllTamagotchis(user_id=user.id),
                                    tamagotchi=DB.MyTamagotchis(int(id)),
-                                   pokemons=pokemons)
+                                   pokemons=pokemons, logados = DB.getOnlineUser())
         else:
             return DB.RedirectIndex()
     else:

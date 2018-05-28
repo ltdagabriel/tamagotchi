@@ -17,8 +17,8 @@
                 </div>
             {%- endif %}
         {%- endwith %}
-        <div class="row">
-            <div class="col-sm-12 col-md-12">
+        <div class="row col-sm-12">
+            <div class="col-sm-11 row">
                 {%- if tamagotchi %}
                     <div class="col-sm-6 text-uppercase text-left"><h3 id="name">{{tamagotchi.name}}</h3></div>
                     <div class="col-sm-6 text-right"><h3 id="age">{{ tamagotchi.last_update - tamagotchi.birthday }}</h3></div>
@@ -106,13 +106,21 @@
                                     </div>
 
                                 </div>
-                            </div>
+                            
+                           </div>
 
                             </div>
                         </div>
                     <div id="id_tamagotchi" class="collapse">{{ tamagotchi.id }}</div>
 
                     </div>
+                    <div class="col-sm-1">
+                                      <li>
+                                        {% for user in logados %}
+                                          <ul>{{ user.username }}</ul>
+                                        {% endfor %}
+                                      </li>
+                                    </div>
                     <!-- Button trigger modal -->
                     
                     
@@ -156,6 +164,8 @@
                 </div>
 
                 <!-- Modal Jogo da Velha -->
+            
+            </div>
             <div class="modal fade bs-example-modal-lg" id="Jogo_da_Velha" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
               <div class="modal-dialog modal-lg">
                 <div class="modal-content">
