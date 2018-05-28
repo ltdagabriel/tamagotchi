@@ -690,7 +690,6 @@ def novotamagotchi():
     user = DB.getSessionUser()
     if user:
         pokemons = DB.getPokemon(user_id=user.id)
-        print (pokemons)
         return render_template('tamagotchi_form.html', pokemons=pokemons)
     else:
         return redirect(url_for('.index'))
@@ -880,6 +879,12 @@ def compraBixo():
     DB = ConnectDatabase()
 
     user = DB.getSessionUser()
+
+    PRICE = float(request.form['price'])
     IMAGEM = str(request.form['poke'])
 
-    DB.SavePokemon(name=IMAGEM, user_id=user.id)
+    if user.money > PRICE:
+        DB.SavePokemon(name=IMAGEM, user_id=user.id)
+    else:
+        flash("Voce so tem $ "+str(user.money)+" falta $ "+str(PRICE - user.money)+". Continue tentando")
+    return DB.RedirectIndex()
