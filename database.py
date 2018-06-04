@@ -1,31 +1,43 @@
 from sqlalchemy import *
 from sqlalchemy import create_engine, ForeignKey
-from sqlalchemy import Column, Date, Integer, String
+from sqlalchemy import Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, backref
 from datetime import datetime
- 
+
 engine = create_engine('sqlite:///tutorial.db', echo=True)
 Base = declarative_base()
- 
+
+
 ########################################################################
 class User(Base):
     """"""
     __tablename__ = "users"
- 
+
     id = Column(Integer, primary_key=True)
-    money = Column(Float, default=3500)
+    money = Column(Float, default=0)
     username = Column(String)
     password = Column(String)
     imagem = Column(String)
- 
-    #----------------------------------------------------------------------
+
+    # ----------------------------------------------------------------------
     def __init__(self, username, password, imagem):
         """"""
         self.username = username
         self.password = password
         self.imagem = imagem
- 
+
+
+class Status(Base):
+    """"""
+    __tablename__ = "status"
+    id = Column(Integer, primary_key=True)
+    tamagotchi_id = Column(Integer, ForeignKey("tamagotchis.id"), nullable=False)
+    state = Column(String)
+
+    def __init__(self, status, tamagotchi_id):
+        self.state = status
+        self.tamagotchi_id = tamagotchi_id
+
 class Tamagotchi(Base):
     """"""
     __tablename__ = "tamagotchis"
@@ -36,11 +48,10 @@ class Tamagotchi(Base):
     name_pokemon = Column(String)
     birthday = Column(DateTime, default=datetime.now())
     last_update = Column(DateTime, default=datetime.now())
-    state = Column(String, default='Saudavel')
-    hunger = Column(Float, default=100.0) 
-    happy = Column(Float, default=100.0) 
+    hunger = Column(Float, default=100.0)
+    happy = Column(Float, default=100.0)
     health = Column(Float, default=100.0)
-    
+
     def __init__(self, name, user_id, imagem):
         """"""
         self.name = name
@@ -50,30 +61,15 @@ class Tamagotchi(Base):
         self.name_pokemon = imagem
 
 
-class AIHash(Base):
-    """"""
-    __tablename__ = "jogo_da_velha"
-    id = Column(Integer, primary_key=True)
-    board = Column(String)
-    my_pice = Column(String)
-    next_move = Column(String)
-
-    def __init__(self, board, my_piece, next_move):
-        """"""
-        self.board = board
-        self.next_move = next_move
-        self.my_pice = my_piece
-
 class Pokemon(Base):
     """"""
     __tablename__ = "pokemons"
     id = Column(Integer, primary_key=True)
-    
+
     width = Column(String, default='80px')
     img = Column(String)
-    
+
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    
 
     nome = Column(String)
     altura = Column(String)
@@ -82,7 +78,6 @@ class Pokemon(Base):
 
     cenario = Column(String, default='default')
 
-    
     def __init__(self, img, width, nome, altura, peso, evolucao, user_id):
         """"""
         self.nome = nome
@@ -92,7 +87,6 @@ class Pokemon(Base):
         self.peso = peso
         self.evolucao = evolucao
         self.user_id = user_id
- 
 
 
 # create tables

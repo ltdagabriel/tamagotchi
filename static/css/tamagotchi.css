@@ -1,0 +1,101 @@
+.my_list{
+    border: 1px solid #0076a3;
+    box-shadow: 5px 5px 10px #0076a3;
+    -webkit-box-shadow: 5px 5px 10px #0076a3;
+    -moz-box-shadow: 5px 5px 10px #0076a3;
+}
+.cenario{
+    height: 500px;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-image: url('/static/imagens/cenarios/default.jpg');
+}
+.my-icon{
+    padding-right: 5px;
+    position: absolute;
+}
+#pokeinfo{
+    width:100%;
+    height:150px;
+    color: white;
+    border: 1px solid #0076a3;
+    border-radius: 3px;
+    padding: 5px;
+    top: 5px;
+    font-size: 10px;
+    position: relative;
+    background-color: rgba(1, 1, 1,0.7);
+}
+#tama{
+    background-color: rgba(255,255,255,0.6)!important;
+}
+.tama-icon{
+    width: 15px;
+}
+
+.pokelist{
+    width:100%;
+    border-radius: 3px;
+    top: 5px;
+    position: relative;
+    height:320px;
+    overflow: auto !important;
+    box-sizing: content-box;
+}
+.pokelist::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+#tama_img{
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+}
+#tama_img#tama_img{
+    width: 100px;
+}
+
+.pokelist::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    width: 0px;
+}
+#inventory{
+    position: absolute;
+    bottom: 0px;
+    right: 20px;
+    padding: 5px;
+}
+#inventory a{
+    color: white;
+    border-style: none ;
+    border-radius: 2px;
+    background-color: rgba(1,1,1,0.5);
+    text-align: right;
+}
+#itens{
+    position: relative;
+    float: right;
+    margin-bottom: 5px;
+}
+
+.pokelist::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    width: 0px;
+}
+.my-bar{
+    height: 10px!important;
+}
+.pokemon-icon{
+    width: 20px;
+    left: 15px;
+}
+.user-icon{
+    width: 30px;
+    left: 15px;
+}
+.my_list{
+    padding-top: 2px;
+}
+.my-msg{
+    padding-top: 10px;
+}
