@@ -123,15 +123,14 @@
     padding-top: 10px;
 }
 @keyframes animatedBackground {
-	from { background-position: 20% 0; }
-	to { background-position: 80% 0; }
+	from { background-position: 0% 0; }
+	to { background-position: 100% 0; }
 }
-
 .pokenav {
     background-image: url("/static/imagens/pokemons/caterpie.gif");
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-size: auto 50px;
-    background-position: 20% 0px;
+    background-position: 0% 0px;
     animation: animatedBackground 40s linear infinite;
 }

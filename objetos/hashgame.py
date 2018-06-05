@@ -47,7 +47,7 @@ class Objetohashgame():
                 self.player2_msg = "Você perdeu, premio de consolação:  $" + str(consolacao) + ",00"
                 usuario.ListUsuario().UserReward(consolacao, self.player2)
                 usuario.ListUsuario().UserReward(recompensa, self.player1)
-                self.player1_msg = "Você venceu, recompensa adquirida:  $" + str(recompensa) + ",00 -" + str(self.player1)
+                self.player1_msg = "Você venceu, recompensa adquirida:  $" + str(recompensa) + ",00"
         elif self.player2_piece == self.winner:
             self.player_winner = self.player2
             if self.player2 == 'machine':
@@ -57,7 +57,7 @@ class Objetohashgame():
                 self.player1_msg = "Você perdeu, premio de consolação:  $" + str(consolacao) + ",00"
                 usuario.ListUsuario().UserReward(consolacao, self.player1)
                 usuario.ListUsuario().UserReward(recompensa, self.player2)
-                self.player2_msg = "Você venceu, recompensa adquirida:  $" + str(recompensa) + ",00 -" + str(self.player2)
+                self.player2_msg = "Você venceu, recompensa adquirida:  $" + str(recompensa) + ",00"
         else:
             if self.player1 == 'machine':
                 usuario.ListUsuario().UserReward(consolacao, self.player2)
@@ -130,8 +130,69 @@ class Objetohashgame():
     def LoadMovements(self):
         moves = ['00', '01', '02', '10', '11', '12', '20', '21', '22']
         movimentos_possiveis = list(filter(self.valid_moves, moves))
-
+        bestmove = []
+        for i in movimentos_possiveis:
+            x = self.verifica_movimento(i)
+            if x:
+                bestmove.append(x)
+        if len(bestmove):
+            return bestmove
         return movimentos_possiveis
+
+    def verifica_movimento(self, movement):
+        linha = int(movement[0])
+        coluna = int(movement[1])
+
+        modded = []
+
+        d1 = []
+        d2 = []
+
+        for i in range(0, 3):
+            v1 = []
+            v2 = []
+            for j in range(0, 3):
+                if linha == i:
+                    v1.append(self.board[i][j])
+                if coluna == i:
+                    v2.append(self.board[j][i])
+                if i == j:
+                    d1.append(self.board[i][j])
+                if i + j == 2:
+                    d2.append(self.board[i][j])
+
+            modded.append(v1)
+            modded.append(v2)
+
+        if linha == coluna:
+            modded.append(d1)
+        if linha + coluna == 2:
+            modded.append(d2)
+
+        opcoes = []
+
+        for x in modded:
+            peca, nivel = self.level_line(x)
+            opcoes.append({'peca': peca, 'nivel': nivel})
+            if nivel == 2:
+                return movement
+
+        return None
+
+    def level_line(self, line):
+        X = line.count('X')
+        B = line.count('B')
+        O = line.count('O')
+        if X == 3:
+            return 'X', 1
+        elif O == 3:
+            return 'O', 1
+        elif X == 2 and B == 1:
+            return 'X', 2
+        elif O == 2 and B == 1:
+            return 'O', 2
+        else:
+            return 'B', 3
 
     def valid_moves(self, movement):
         linha = int(movement[0])

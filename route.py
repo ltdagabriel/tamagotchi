@@ -205,13 +205,16 @@ def load_hash():
     return jsonify({'error': 'Algo de errado aconteceu'})
 
 
+@route.route('/info/<idioma>')
 @route.route('/info')
-def comoJogar():
-    return render_template('comoJogar.html', titulo="Como jogar")
+def comoJogar(idioma='pt-br'):
+    return render_template('comoJogar.html', titulo="Como jogar", idioma=idioma)
+
 
 @route.route('/ranking')
 def ranking():
     return render_template('ranking.html', titulo="Ranking")
+
 
 
 
