@@ -203,3 +203,8 @@ def load_hash():
                                             param=str(request.form['param']),
                                             player=user.username)
     return jsonify({'error': 'Algo de errado aconteceu'})
+
+
+@route.route('/info')
+def comoJogar():
+    return render_template('comoJogar.html')

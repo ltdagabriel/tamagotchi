@@ -1,0 +1,106 @@
+{%- extends "bootstrap/base.html" %}
+
+{% block title %}
+    Informações
+{% endblock %}
+
+{% block head %}
+    <link rel="icon" href="/static/imagens/favicon.png" type="image/x-icon"/>
+    <link href="https://fonts.googleapis.com/css?family=Song+Myung" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/tamagotchi.css" type="text/css">
+    <link rel="stylesheet" href="/static/css/comoJogar.css" type="text/css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css" type="text/css">
+
+    <script src="/static/style/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/objetos/usuario.js"></script>
+    <script src="/static/objetos/utils.js"></script>
+    <script src="/static/objetos/tamagotchi.js"></script>
+    {{ super() }}
+{% endblock %}
+
+{% block body %}
+<body>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Tamagotchi</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li><a href="/tamagotchis/new">Criar Tamagotchi <span class="sr-only">(current)</span></a></li>
+            <li><a href="/info">Informações <span class="sr-only">(current)</span></a></li>
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="/logout">Deslogar</a></li>
+            <li>
+              <a>Usuario</a>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+    <div class="naruto">
+    <h2 class="titulo"> Como Jogar</h2>
+
+    <h3>Começando</h3>
+    <p>Para começar o jogo é necessário criar seu tamagotchi, isto pode ser feito clicando no botão "Criar Tamagotchi", ao fazer isso uma nova página será aberta com um campo para inserir o nome de seu tamagotchi, além disso você deve escolher uma das três opções iniciais de tamagotchi. Você pode criar quantos tamagotchis desejar!  </p>
+
+    <h3>Guia Básico</h3>
+    <p>Após ter criado seu tamagotchi você verá que existem três barras: Vida, Fome e Felicidade, você nunca deve deixar essas barras chegarem a zero! Caso contrário seu tamagotchi morre :-(. Para isso você deve cuidar dele diariamente, alimentando-o, dando remédios quando necessário e brincando com ele, essas ações podem ser realizadas clicando no menu localizado no canto inferior direito da tela chamado "Itens", ao clicar sobre ele você verá três objetos: uma maçã, uma seringa e uma bola, para encher a barra de Fome, arraste a maçã até seu tamagotchi, para Vida, arraste a seringa e por último não menos importante arraste a bola para encher a barra de Felicidade. Se você criar mais de um tamagotchi eles serão exibidos em uma lista que fica localizada em baixo do status do seu tamagotchi, então você pode selecionar o tamagotchi que deseja cuidar no momento.</p>
+
+    <h3>Guia Avançado</h3>
+    <p>O título não condiz com o conteúdo, na verdade, aqui eu explicarei como conseguir dinheiro, mas para que serve o dinheiro? O dinheiro serve para comprar outros tipos de tamagotchis, para isso existe também no canto inferior direito um botão para abrir a loja, lá você pode encontrar vários outros tipos de tamagotchis que só podem ser adquiridos comprando-os. O dinheiro pode ser obtido jogando os mini jogos, que por enquanto só existe um :-(, o mini jogo "Jogo da Velha", pode ser jogado single-player, isto é, você sozinho contra uma inteligência artificial, ou no modo multi-player que é jogado entre duas pessoas que estão online, para jogar no modo multi-player você deve clicar em New Game, e aguardar até que outro jogador entre na sua partida, mas não se iluda! só crie uma partida se existir pelo menos outro jogador online, além de você(é claro), para verificar os jogadores online, existe uma lista que está no canto direito da tela que exibe todos os jogadores que estão online cuidando de seus tamagotchis. Ao ganhar uma partida ou perder você ganha uma quantia de dinheiro, é claro que ao perder você ganha menos, com isto você será capaz de comprar quantos tamagotchis você quiser, ou melhor, tiver dinheiro. :-) </p>
+
+    <h2>O que está por vir</h2>
+    <p>Existem muitas ideias que planejamos implantar, entre elas:</p>
+    <ul>
+      <li>Chat para conversa entre usuários</li>
+      <li>Mais mini jogos</li>
+      <li>Mais variações de alimentos, assim como preço nos alimentos ( ͡° ͜ʖ ͡°)</li>
+    </ul>
+
+    <h2>Direitos Autorais</h2>
+    <p>As imagens utilizadas para os tamagotchis foram produzidas pela Nintendo/GameFreak e eles são os legítimos detentores dos direitos autorais. Este jogo não possui nenhuma intenção em lucros e motivação financeira.</p>
+    </div>
+
+    <div class="sasuke">
+    <h2 class="titulo"> How to Play</h2>
+
+    <h3>Getting Started</h3>
+    <p>To start the game you need to create your tamagotchi, this can be done by clicking the "Create Tamagotchi" button, when doing this a new page will open with a field to enter the name of your tamagotchi, in addition you must choose one of the three options initials of tamagotchi. You can create as many tamagotchis as you wish! </p>
+
+    <h3>Basic Guide</h3>
+    <p>After you have created your tamagotchi you will see that there are three bars: Life, Hunger and Happiness, you should never let these bars reach zero! To do this you must take care of it daily, feeding it, giving medicine when necessary and playing with it, these actions can be done by clicking the menu located in the lower right corner of the screen called "Items", by clicking on it you will see three objects: an apple, a syringe and a ball, to fill the Hunger bar, drag the apple to your tamagotchi, to Life, drag the syringe and last but not least drag the ball to fill the Hapiness bar. If you create more than one tamagotchi they will be displayed in a list that is located below the status of your tamagotchi, then you can select the tamagotchi that you want to take care of at the moment.</p>
+
+    <h3>Advanced Guide</h3>
+    <p>The title does not match the content, in fact, here I will explain how to get money, but what is the money for? The money is to buy other types of tamagotchis, so there is also in the bottom right a button to open the shop, there you can find several other types of tamagotchis that can only be bought by buying them(obviously). The money can be obtained by playing the mini games, which for now there is only one :-(, the mini game "Jogo da Velha" can be played single-player, that is, you alone against an artificial intelligence, or in multi-player mode that is played between two people who are online, to play in multi-player mode you must click New Game, and wait until another player enters your match, but do not be fooled! just create a match if there is at least another online player, besides you (of course), to check the players online, there is a list that is in the right corner of the screen that shows all the players that are online taking care of their tamagotchis. When winning a match or losing you win an amount of money, of course that when you lose you earn less, with this you will be able to buy as many tamagotchis as you want, or better, you have money.:-) </p>
+
+    <h2>What's to Come</h2>
+    <p>There are many ideas we plan to implement, including:</p>
+    <ul>
+      <li>Chat for conversation between users</li>
+      <li>More mini games</li>
+      <li>More food variations as well as food prices ( ͡° ͜ʖ ͡°)</li>
+    </ul>
+
+    <h2>Copyright</h2>
+    <p>The images used for the tamagotchis were produced by Nintendo / GameFreak and they are the legitimate copyright holders. This game has no intention in profits and financial motivation.</p>
+
+    </div>
+
+</body>
+
+    
+
+{% endblock %}

@@ -1,0 +1,14 @@
+.naruto{
+	width: 48%;
+	text-align: justify;
+	font-family: 'Song Myung', serif;
+}
+
+.sasuke{
+	position: absolute;
+	right: 0px;
+	top: 60px;
+	width: 48%;
+	text-align: justify;
+	font-family: 'Song Myung', serif;
+}
