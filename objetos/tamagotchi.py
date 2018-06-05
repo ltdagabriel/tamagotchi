@@ -2,8 +2,8 @@
 from sqlalchemy.orm import sessionmaker
 from session import *
 from database import *
-import _thread
 from objetos import pokemon
+import _thread
 import time
 from datetime import timedelta
 import humanize

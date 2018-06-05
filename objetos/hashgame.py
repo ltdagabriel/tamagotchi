@@ -2,6 +2,7 @@
 from flask import jsonify
 from datetime import datetime
 from random import randint
+from objetos import usuario
 
 
 class Objetohashgame():
@@ -10,6 +11,8 @@ class Objetohashgame():
         self.player1 = player1
         self.player2 = player2
         self.key = key
+        self.winner = None
+        self.player_winner = None
         self.next_piece = 'X'
         self.player1_piece = player1_piece
         self.player2_piece = player2_piece
@@ -19,32 +22,60 @@ class Objetohashgame():
         self.state = 'Game Started'
         self.last_action = datetime.now()
 
-        self.player1_msg = []
-        self.player2_msg = []
+        self.player1_msg = ""
+        self.player2_msg = ""
+
+        self.valid = True if len(self.LoadMovements()) else False
 
     def machineMove(self):
         moves = self.LoadMovements()
-        move = moves[randint(0, len(moves))]
+        move = moves[randint(0, len(moves)-1)]
 
         self.Movement(player=self.player2, casa=move)
 
-    def LoadMovements(self):
-        moves = ['00', '01', '02', '10', '11', '12', '20', '21', '22']
-        movimentos_possiveis = list(filter(self.valid_moves, moves))
-        # bestmoves = self.findmove()
-        # if len(bestmoves):
-        #     return bestmoves
-        return movimentos_possiveis
+    def reward(self):
 
-    def valid_moves(self, movement):
-        linha = int(movement[0])
-        coluna = int(movement[1])
-        if self.board[linha][coluna] == 'B':
-            return True
-        return False
+        consolacao = 10
+        recompensa = 20
 
-    def findmove(self):
-        modded = []
+        if self.player1_piece == self.winner:
+            self.player_winner = self.player1
+            if self.player1 == 'machine':
+                usuario.ListUsuario().UserReward(consolacao, self.player2)
+                self.player2_msg = "Você perdeu, premio de consolação:  $" + str(consolacao) + ",00"
+            else:
+                self.player2_msg = "Você perdeu, premio de consolação:  $" + str(consolacao) + ",00"
+                usuario.ListUsuario().UserReward(consolacao, self.player2)
+                usuario.ListUsuario().UserReward(recompensa, self.player1)
+                self.player1_msg = "Você venceu, recompensa adquirida:  $" + str(recompensa) + ",00 -" + str(self.player1)
+        elif self.player2_piece == self.winner:
+            self.player_winner = self.player2
+            if self.player2 == 'machine':
+                usuario.ListUsuario().UserReward(consolacao, self.player1)
+                self.player1_msg = "Você perdeu, premio de consolação:  $" + str(consolacao) + ",00"
+            else:
+                self.player1_msg = "Você perdeu, premio de consolação:  $" + str(consolacao) + ",00"
+                usuario.ListUsuario().UserReward(consolacao, self.player1)
+                usuario.ListUsuario().UserReward(recompensa, self.player2)
+                self.player2_msg = "Você venceu, recompensa adquirida:  $" + str(recompensa) + ",00 -" + str(self.player2)
+        else:
+            if self.player1 == 'machine':
+                usuario.ListUsuario().UserReward(consolacao, self.player2)
+                self.player2_msg = "Empate, premio de consolação:  $" + str(consolacao) + ",00"
+            elif self.player2 == 'machine':
+                usuario.ListUsuario().UserReward(consolacao, self.player1)
+                self.player1_msg = "Empate, premio de consolação:  $" + str(consolacao) + ",00"
+            else:
+                usuario.ListUsuario().UserReward(consolacao, self.player1)
+                usuario.ListUsuario().UserReward(consolacao, self.player2)
+                self.player1_msg = "Empate, premio de consolação:  $" + str(consolacao) + ",00"
+                self.player2_msg = "Empate, premio de consolação:  $" + str(consolacao) + ",00"
+
+    def update(self):
+        self.valid = True if len(self.LoadMovements()) else False
+        if not self.valid:
+            self.winner = 'B'
+            self.reward()
         d1 = []
         d2 = []
 
@@ -60,54 +91,54 @@ class Objetohashgame():
                 if i + j == 2:
                     d2.append(self.board[i][j])
 
-            modded.append([v1, str(i) + 'X'])
-            modded.append([v2, 'X' + str(j)])
+            if v1.count('X') == 3:
+                self.winner = 'X'
+                self.reward()
+                return
+            elif v1.count('O') == 3:
+                self.winner = 'O'
+                self.reward()
+                return
 
-        modded.append([d1, 'XX'])
+            if v2.count('X') == 3:
+                self.winner = 'X'
+                self.reward()
+                return
+            elif v2.count('O') == 3:
+                self.winner = 'O'
+                self.reward()
+                return
 
-        modded.append([d2, 'YY'])
+        if d1.count('X') == 3:
+            self.winner = 'X'
+            self.reward()
+            return
+        elif d1.count('O') == 3:
+            self.winner = 'O'
+            self.reward()
+            return
 
-        new = []
-        for x in modded:
-            if self.level_line(x) == 2:
-                new.append(self.loadBpostion(x))
-        if len(new):
-            return new
+        if d2.count('X') == 3:
+            self.winner = 'X'
+            self.reward()
+            return
+        elif d2.count('O') == 3:
+            self.winner = 'O'
+            self.reward()
+            return
 
-        return None
+    def LoadMovements(self):
+        moves = ['00', '01', '02', '10', '11', '12', '20', '21', '22']
+        movimentos_possiveis = list(filter(self.valid_moves, moves))
 
-    def loadBpostion(self, x):
-        if x[1] == 'XX':
-            for i in range(3):
-                if x[0][i][i] == 'B':
-                    return str(i)+str(i)
-        elif x[1] == 'YY':
-            for i in range(3):
-                if x[0][i][2-i] == 'B':
-                    return str(i)+str(i)
-        elif x[1][0] == 'X':
-            for i in range(3):
-                if x[0][i][int(x[1][1])] == 'B':
-                    return str(i)+x[1][1]
-        else:
-            for i in range(3):
-                if x[0][int(x[1][1])][i] == 'B':
-                    return x[1][1] + str(i)
+        return movimentos_possiveis
 
-    def level_line(self, line):
-        X = line[0].count('X')
-        B = line[0].count('B')
-        O = line[0].count('O')
-        if X == 3:
-            return 1
-        elif O == 3:
-            return 1
-        elif X == 2 and B == 1:
-            return 2
-        elif O == 2 and B == 1:
-            return 2
-        else:
-            return 3
+    def valid_moves(self, movement):
+        linha = int(movement[0])
+        coluna = int(movement[1])
+        if self.board[linha][coluna] == 'B':
+            return True
+        return False
 
     def Join(self, player):
         p = 0
@@ -129,6 +160,8 @@ class Objetohashgame():
         self.board[int(casa[0])][int(casa[1])] = self.player2_piece if self.player2 == player else self.player1_piece
         self.next_piece = self.player2_piece if self.player1 == player else self.player1_piece
 
+        self.update()
+
     def isMachine(self):
         if self.player2 == 'machine' and self.player2_piece == self.next_piece:
             return True
@@ -137,14 +170,18 @@ class Objetohashgame():
         return False
 
     def get(self):
+        self.update()
         return {'player1': self.player1,
                 'player2': self.player2,
                 'player1_msg': self.player1_msg,
                 'player2_msg': self.player2_msg,
                 'next': self.next_piece,
+                'winner': self.winner,
+                'player_winner': self.player_winner,
                 'player1_piece': self.player1_piece,
                 'player2_piece': self.player2_piece,
                 'board': self.board,
+                'valid': self.valid,
                 'key': self.key,
                 'idle': int((datetime.now() - self.last_action).total_seconds())
                 }
@@ -154,6 +191,9 @@ class hashgame():
     class __hashgame():
         def __init__(self):
             self.games = []
+
+        def load(self):
+            return self.games
 
         def game(self, comand=None, game=None, param=None, player=None):
 
@@ -196,6 +236,7 @@ class hashgame():
             if comand == 'Move':
                 self.games[int(game)].Movement(player=player,
                                                casa=param)
+                self.games[int(game)].update()
                 key = int(game)
                 return jsonify({'key': key,
                                 'game': self.games[key].get()})

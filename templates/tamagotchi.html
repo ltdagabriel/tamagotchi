@@ -1,4 +1,5 @@
 {%- extends "bootstrap/base.html" %}
+{% import 'navbar.html' as navbar %}
 
 {% block title %}
     {{ titulo }}
@@ -21,38 +22,7 @@
 
 {% block body %}
     <body>
-    <nav class="navbar navbar-default">
-        <div class="pokenav">
-            <div class="container-fluid">
-                <!-- Brand and toggle get grouped for better mobile display -->
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-                            data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="/">Tamagotchi</a>
-                </div>
-                <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav">
-                        <li><a href="/tamagotchis/new">Criar Tamagotchi <span class="sr-only">(current)</span></a></li>
-                        <li><a href="/info">Informações <span class="sr-only">(current)</span></a></li>
-
-                    </ul>
-
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="/logout">Deslogar</a></li>
-                        <li>
-                            <a>Usuario</a>
-                        </li>
-                    </ul>
-                </div><!-- /.navbar-collapse -->
-            </div><!-- /.container-fluid -->
-        </div>
-    </nav>
+    {{ navbar }}
     <div class="col-sm-12 row">
         <div class="col-sm-10 container">
             {% with messages = get_flashed_messages(with_categories=true) %}

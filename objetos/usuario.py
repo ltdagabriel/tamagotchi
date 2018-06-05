@@ -104,12 +104,17 @@ class ListUsuario:
             else:
                 return None
 
-        def UserReward(self, size, username):
+        def UserReward(self, money, username):
+
+
             session = sessionmaker(bind=engine)()
 
-            user = session.query(User).filter(User.username.in_([username])).first()
-            user.money = user.money + size
-            session.commit()
+            user = session.query(User).filter(User.username.in_([str(username)])).first()
+
+            print("{[]}", user, username, money)
+            if user:
+                user.money = user.money + money
+                session.commit()
 
         def login(self, username, password):
             user = list(sessionmaker(bind=engine)().query(User).filter(User.username.in_([username]),

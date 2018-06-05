@@ -207,10 +207,15 @@ def load_hash():
 
 @route.route('/info')
 def comoJogar():
-    return render_template('comoJogar.html')
+    return render_template('comoJogar.html', titulo="Como jogar")
+
+@route.route('/ranking')
+def ranking():
+    return render_template('ranking.html', titulo="Ranking")
 
 
-@frontend.route('/reward', methods=['POST'])
+
+@route.route('/reward', methods=['POST'])
 def Reward():
     player1 = str(request.form['player1'])
     player2 = str(request.form['player2'])
