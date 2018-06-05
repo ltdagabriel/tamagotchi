@@ -1,22 +1,25 @@
-.my_list{
+.my_list {
     border: 1px solid #0076a3;
     box-shadow: 5px 5px 10px #0076a3;
     -webkit-box-shadow: 5px 5px 10px #0076a3;
     -moz-box-shadow: 5px 5px 10px #0076a3;
 }
-.cenario{
+
+.cenario {
     height: 500px;
     background-size: 100%;
     background-repeat: no-repeat;
     background-image: url('/static/imagens/cenarios/default.jpg');
 }
-.my-icon{
+
+.my-icon {
     padding-right: 5px;
     position: absolute;
 }
-#pokeinfo{
-    width:100%;
-    height:150px;
+
+#pokeinfo {
+    width: 100%;
+    height: 150px;
     color: white;
     border: 1px solid #0076a3;
     border-radius: 3px;
@@ -24,55 +27,70 @@
     top: 5px;
     font-size: 10px;
     position: relative;
-    background-color: rgba(1, 1, 1,0.7);
+    background-color: rgba(1, 1, 1, 0.7);
 }
-#tama{
-    background-color: rgba(255,255,255,0.6)!important;
+
+#tama {
+    background-color: rgba(255, 255, 255, 0.6) !important;
 }
-.tama-icon{
+
+.tama-icon {
     width: 15px;
 }
 
-.pokelist{
-    width:100%;
+.pokelist {
+    width: 100%;
     border-radius: 3px;
     top: 5px;
     position: relative;
-    height:320px;
+    height: 320px;
     overflow: auto !important;
     box-sizing: content-box;
 }
+
 .pokelist::-webkit-scrollbar {
-    width: 0px;  /* remove scrollbar space */
-    background: transparent;  /* optional: just make scrollbar invisible */
+    width: 0px; /* remove scrollbar space */
+    background: transparent; /* optional: just make scrollbar invisible */
 }
-#tama_img{
+
+#tama_img {
     position: absolute;
     bottom: 50px;
     left: 50%;
 }
-#tama_img#tama_img{
+
+#tama_img#tama_img {
     width: 100px;
+}
+
+#diagonal_bottons {
+    position: absolute;
+    right: -65px;
+    bottom: 200px;
+    transform: rotate(-90deg);
 }
 
 .pokelist::-webkit-scrollbar-thumb {
     background-color: transparent;
     width: 0px;
 }
-#inventory{
+
+#inventory {
     position: absolute;
     bottom: 0px;
     right: 20px;
     padding: 5px;
 }
-#inventory a{
+
+#inventory a {
     color: white;
-    border-style: none ;
+    border-style: none;
     border-radius: 2px;
-    background-color: rgba(1,1,1,0.5);
+    background-color: rgba(1, 1, 1, 0.5);
     text-align: right;
 }
-#itens{
+
+#itens {
     position: relative;
     float: right;
     margin-bottom: 5px;
@@ -82,20 +100,38 @@
     background-color: transparent;
     width: 0px;
 }
-.my-bar{
-    height: 10px!important;
+
+.my-bar {
+    height: 10px !important;
 }
-.pokemon-icon{
+
+.pokemon-icon {
     width: 20px;
     left: 15px;
 }
-.user-icon{
+
+.user-icon {
     width: 30px;
     left: 15px;
 }
-.my_list{
+
+.my_list {
     padding-top: 2px;
 }
-.my-msg{
+
+.my-msg {
     padding-top: 10px;
+}
+@keyframes animatedBackground {
+	from { background-position: 20% 0; }
+	to { background-position: 80% 0; }
+}
+
+.pokenav {
+    background-image: url("/static/imagens/pokemons/caterpie.gif");
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: auto 50px;
+    background-position: 20% 0px;
+    animation: animatedBackground 40s linear infinite;
 }

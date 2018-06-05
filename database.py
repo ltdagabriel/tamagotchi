@@ -38,6 +38,7 @@ class Status(Base):
         self.state = status
         self.tamagotchi_id = tamagotchi_id
 
+
 class Tamagotchi(Base):
     """"""
     __tablename__ = "tamagotchis"
@@ -75,6 +76,7 @@ class Pokemon(Base):
     altura = Column(String)
     peso = Column(String)
     evolucao = Column(String)
+    selected = Column(DateTime)
 
     cenario = Column(String, default='default')
 
@@ -87,6 +89,7 @@ class Pokemon(Base):
         self.peso = peso
         self.evolucao = evolucao
         self.user_id = user_id
+        self.selected = datetime.now()
 
 
 # create tables

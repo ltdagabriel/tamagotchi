@@ -16,63 +16,68 @@
 {% endblock %}
 
 {% block body %}
-<body>
+    <body>
     <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/">Tamagotchi</a>
-        </div>
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                        data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">Tamagotchi</a>
+            </div>
 
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="/tamagotchis/new">Criar Tamagotchi <span class="sr-only">(current)</span></a></li>
-          </ul>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="/tamagotchis/new">Criar Tamagotchi <span
+                            class="sr-only">(current)</span></a></li>
+                </ul>
 
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="/logout">Deslogar</a></li>
-            <li>
-              <a>Usuario</a>
-            </li>
-          </ul>
-        </div><!-- /.navbar-collapse -->
-      </div><!-- /.container-fluid -->
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/logout">Deslogar</a></li>
+                    <li>
+                        <a>Usuario</a>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
     </nav>
     <div class="col-sm-12 row">
         <div class="col-sm-10">
             <div class="container col-sm-12">
                 {% with messages = get_flashed_messages(with_categories=true) %}
-                   <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
-                   {% if messages %}
-                       {% for category, message in messages %}
-                           <div class="alert alert-{{ category }} alert-dismissible alert-warning" role="alert">
-                              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                              <!-- <strong>Title</strong> --> {{ message }}
-                           </div>
-                       {% endfor %}
-                   {% endif %}
+                    <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible alert-warning" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                                <!-- <strong>Title</strong> --> {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
                 {% endwith %}
 
                 <form action="/tamagotchis/new" method="post">
                     <div class="form-group">
-                      <label for="nome">Nome</label>
-                      <input type="text" class="form-control" id="nome" name="nome" aria-describedby="loginHelp" required placeholder="Digite o nome do Tamagotchi">
+                        <label for="nome">Nome</label>
+                        <input type="text" class="form-control" id="nome" name="nome" aria-describedby="loginHelp"
+                               required placeholder="Digite o nome do Tamagotchi">
 
-                      <!-- Opcoes de Tamagotchi -->
+                        <!-- Opcoes de Tamagotchi -->
                         <div class="radio">
-                          {%- for pokemon in pokemons %}
-                            <label class="radio-inline">
-                                <input type="radio" name="poke" id="poke" value="{{pokemon.nome}}" required>
-                                <img src="/static/imagens/pokemons/{{pokemon.img}}" style="width: 70px" title={{ pokemon.nome }}>
-                            </label>
-                          {%- endfor %}
+                            {%- for pokemon in pokemons %}
+                                <label class="radio-inline">
+                                    <input type="radio" name="poke" id="poke" value="{{ pokemon.nome }}" required>
+                                    <img src="/static/imagens/pokemons/{{ pokemon.img }}" style="width: 70px"
+                                         title={{ pokemon.nome }}>
+                                </label>
+                            {%- endfor %}
                         </div>
 
                     </div>
@@ -90,11 +95,11 @@
                     <i id="username">John Doe</i>
                     <img id="imagem" class="user-icon my-icon" src="/static/imagens/personagens/ashe.png">
                     <div id="mensagem" class="text-left my-msg">
-                      In Game
+                        In Game
                     </div>
                 </li>
             </ul>
         </div>
     </div>
-</body>
+    </body>
 {% endblock %}

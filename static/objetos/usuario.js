@@ -1,32 +1,33 @@
-$(document).ready(()=>{
+$(document).ready(() => {
     load_users()
 })
 var load_user_error = 0
+
 function load_users() {
     $.ajax({
         dataType: 'json',
         url: '/usuarios',
         type: 'POST',
         success: function (response) {
-            if(!response.usuarios){
+            if (!response.usuarios) {
                 return
             }
             let usuarios = response['usuarios']
             let mensagens = response['mensagens']
             let status = response['status']
-            let user= ""
-            for(let i=0;i< usuarios.length;i++){
-                user+="<li id=\"user\" class=\"list-group-item my-list collapse\">\n" +
+            let user = ""
+            for (let i = 0; i < usuarios.length; i++) {
+                user += "<li id=\"user\" class=\"list-group-item my-list collapse\">\n" +
                     "      <span id=\"help\" class=\"badge\">" +
-                                mensagens.length+
+                    mensagens.length +
                     "      </span>\n" +
                     "      <i id=\"username\">" +
-                                usuarios[i].user.username+
+                    usuarios[i].user.username +
                     "      </i>\n" +
                     "      <img id=\"imagem\" class=\"user-icon my-icon\" " +
-                    "           src=\"/static/imagens/personagens/"+usuarios[i].user.imagem+"\">\n" +
+                    "           src=\"/static/imagens/personagens/" + usuarios[i].user.imagem + "\">\n" +
                     "      <div id=\"mensagem\" class=\"text-left my-msg\">\n" +
-                                status+
+                    status +
                     "      </div>\n" +
                     "  </li>"
 
@@ -36,8 +37,8 @@ function load_users() {
             setTimeout(load_users, 1000);
         },
         error: function (error) {
-            load_user_error+=1
-            if(load_user_error <= 5){
+            load_user_error += 1
+            if (load_user_error <= 5) {
                 setTimeout(load_users, 1000);
             }
             console.error(error)

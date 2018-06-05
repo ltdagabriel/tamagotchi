@@ -27,6 +27,7 @@ class LoadTamagotchi():
         except ValueError:
             print("Error")
 
+
 class ObjetoStatus:
     def __init__(self):
         self.status = []
@@ -63,11 +64,13 @@ class ObjetoStatus:
 
 class ObjetoTamagotchi:
     def __init__(self, tamagotchi):
+        self.poke = pokemon.ListPokemon()
         self.tamagotchi = tamagotchi
         self.happy = []
         self.hunger = []
         self.health = []
         self.status = ObjetoStatus()
+
 
     def setstatus(self, status):
         self.status.setStatus(self.tamagotchi.id, status)
@@ -91,6 +94,7 @@ class ObjetoTamagotchi:
 
         delta = (datetime.now() - self.tamagotchi.last_update).total_seconds()
 
+
         # Atualiza taxa de decaimento dos status
         if self.findstatus('Triste'):
             happy = 0.01
@@ -100,6 +104,15 @@ class ObjetoTamagotchi:
 
         if self.findstatus('Faminto'):
             hunger = 0.01
+
+        # Evolução
+        pokelist = pokemon.ListPokemon()
+        poke = pokelist.loadDatabasebyName(self.tamagotchi.name_pokemon, self.tamagotchi.user_id)
+        poke = poke[0].pokemon
+
+        if poke.evolucao and (datetime.now() - poke.selected).total_seconds() > 60 * 30:
+            pokelist.saveDatabase(poke.evolucao, self.tamagotchi.user_id)
+            self.tamagotchi.name_pokemon = poke.evolucao
 
         # atualiza barras
         self.health.append(-1*delta*health)
@@ -133,6 +146,8 @@ class ObjetoTamagotchi:
         s = sessionmaker(bind=engine)()
         tama = s.query(Tamagotchi).filter(Tamagotchi.id.in_([self.tamagotchi.id])).first()
 
+        tama.name_pokemon = self.tamagotchi.name_pokemon
+
         health = tama.health + sum(self.health)
         tama.health = health if health <= 100 else 100
         self.tamagotchi.health = tama.health
@@ -162,7 +177,7 @@ class ObjetoTamagotchi:
     def to_json(self):
         tamagotchi = {}
 
-        poke = pokemon.ListPokemon().loadDatabasebyName(self.tamagotchi.name_pokemon, self.tamagotchi.user_id)[0]
+        poke = self.poke.loadDatabasebyName(self.tamagotchi.name_pokemon, self.tamagotchi.user_id)[0]
 
         for i in Tamagotchi.__table__.columns.keys():
             tamagotchi.update({i: self.tamagotchi.__getattribute__(i)})

@@ -15,38 +15,42 @@
     <script src="/static/objetos/usuario.js"></script>
     <script src="/static/objetos/utils.js"></script>
     <script src="/static/objetos/tamagotchi.js"></script>
+    <script src="/static/objetos/hashgame.js"></script>
     {{ super() }}
 {% endblock %}
 
 {% block body %}
-<body>
+    <body>
     <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/">Tamagotchi</a>
+        <div class="pokenav">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="/">Tamagotchi</a>
+                </div>
+
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li><a href="/tamagotchis/new">Criar Tamagotchi <span class="sr-only">(current)</span></a></li>
+                    </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/logout">Deslogar</a></li>
+                        <li>
+                            <a>Usuario</a>
+                        </li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
         </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-          <ul class="nav navbar-nav">
-            <li><a href="/tamagotchis/new">Criar Tamagotchi <span class="sr-only">(current)</span></a></li>
-          </ul>
-
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="/logout">Deslogar</a></li>
-            <li>
-              <a>Usuario</a>
-            </li>
-          </ul>
-        </div><!-- /.navbar-collapse -->
-      </div><!-- /.container-fluid -->
     </nav>
     <div class="col-sm-12 row">
         <div class="col-sm-10 container">
@@ -54,7 +58,9 @@
                 <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
                 {% if messages %}
                     {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible alert-warning" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <div class="alert alert-{{ category }} alert-dismissible alert-warning" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
                             <!-- <strong>Title</strong> --> {{ message }}
                         </div>
                     {% endfor %}
@@ -113,28 +119,39 @@
                     </div>
                 </div>
             </div>
-                <div ondrop="drop(event)" id="pokerender" class=" img-responsive" ondragover="allowDrop(event)">
-                    <img id="tama_img" src="/static/imagens/pokemons/aerodactyl.gif">
-                </div>
-                <div id="inventory" class="col-sm-1" >
-                    <div id="itens" class="collapse col-sm-2">
-                        <div class="col-sm-12">
-                            <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="health_10" ondragstart="drag(event)"  src="/static/imagens/usable/seringa.png" draggable="true" / >
-                        </div>
-                        <div class="col-sm-12">
-                            <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="hunger_10" ondragstart="drag(event)"  src="/static/imagens/usable/maca.png" draggable="true" / >
-                        </div>
-                        <div class="col-sm-12">
-                            <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)" id="happy_10" ondragstart="drag(event)"  src="/static/imagens/usable/bola.png" draggable="true" / >
-                        </div>
+            <div ondrop="drop(event)" id="pokerender" class=" img-responsive" ondragover="allowDrop(event)">
+                <img id="tama_img" src="/static/imagens/pokemons/default.png">
+            </div>
+            <div id="diagonal_bottons" class="btn-group btn-group-sm btn-success">
+                <button type="button" class="btn btn-success" onclick="loadItens()">
+                    Itens
+                </button>
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#myModal">
+                    Loja
+                </button>
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#Jogo_da_Velha">
+                    Jogo da Velha
+                </button>
+            </div>
+            <div id="inventory" class="col-sm-1">
+                <div id="itens" class="collapse col-sm-2">
+                    <div class="col-sm-12">
+                        <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)"
+                             id="health_10" ondragstart="drag(event)" src="/static/imagens/usable/seringa.png"
+                             draggable="true" / >
                     </div>
-                    <a href="#" class="col-sm-12" onclick="loadItens()">
-                        Itens
-                    </a>
-                    <button type="button" class="btn btn-primary-outline" data-toggle="modal" data-target="#myModal" >
-                        Loja
-                    </button>
+                    <div class="col-sm-12">
+                        <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)"
+                             id="hunger_10" ondragstart="drag(event)" src="/static/imagens/usable/maca.png"
+                             draggable="true" / >
+                    </div>
+                    <div class="col-sm-12">
+                        <img style="width:32px; float:right" onmouseover="bigImg(this)" onmouseout="normalImg(this)"
+                             id="happy_10" ondragstart="drag(event)" src="/static/imagens/usable/bola.png"
+                             draggable="true" / >
+                    </div>
                 </div>
+            </div>
         </div>
 
         <div id="usuarios_online" class="col-sm-2 my_list text-center">
@@ -146,7 +163,7 @@
                     <i id="username">John Doe</i>
                     <img id="imagem" class="user-icon my-icon" src="/static/imagens/personagens/ashe.png">
                     <div id="mensagem" class="text-left my-msg">
-                      In Game
+                        In Game
                     </div>
                 </li>
             </ul>
@@ -154,40 +171,97 @@
     </div>
 
 
-<!-- Modal Loja -->
-                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
+    <!-- Modal Loja -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
 
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h4 class="modal-title" id="myModalLabel">Loja</h4>
-                        </div>
-                          <div class="modal-body col-sm-12">
-                              {% for pokemon in pokemons %}
-                                <form action="/tamagotchi/buy" class="col-sm-4 thumbnail" method="post">
-                                  <ul class="list-group col-sm-12" style="height: 120px">
-                                    <input type="hidden" name="price" id="price" value={{ pokemon.price }}>
-
-                                      <input type="hidden" name="poke" id="poke" value="{{ pokemon.nome }}">
-                                      <img style="position: absolute; bottom: 0; left: 25%; right: 25%" src="{{url_for('static', filename='pokemons/'+pokemon.img)}}">
-
-                                  </ul>
-                                    <div class="col-sm-12 text-center">
-                                        <p style="color: #2980B9">{{ pokemon.nome }}</p>
-                                        <p style="color: lime">$ {{ pokemon.price }}</p>
-                                        <button type="submit" onclick="location.href='/'" class="btn btn-primary">Comprar</button>
-                                    </div>
-                                </form>
-                              {% endfor %}
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-                          </div>
-
-                    </div>
-                  </div>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Loja</h4>
                 </div>
+                <div class="modal-body col-sm-12">
+                    {% for pokemon in pokemons %}
+                        <form action="/tamagotchi/buy" class="col-sm-4 thumbnail" method="post">
+                            <ul class="list-group col-sm-12" style="height: 120px">
+                                <input type="hidden" name="price" id="price" value={{ pokemon.price }}>
 
-</body>
+                                <input type="hidden" name="poke" id="poke" value="{{ pokemon.nome }}">
+                                <img style="position: absolute; bottom: 0; left: 25%; right: 25%"
+                                     src="/static/imagens/pokemons/{{ pokemon.img }}">
+
+                            </ul>
+                            <div class="col-sm-12 text-center">
+                                <p style="color: #2980B9">{{ pokemon.nome }}</p>
+                                <p style="color: lime">$ {{ pokemon.price }}</p>
+                                <button type="submit" onclick="location.href='/'" class="btn btn-primary">Comprar
+                                </button>
+                            </div>
+                        </form>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- Modal Jogo da Velha -->
+    <div class="modal fade bs-example-modal-lg" id="Jogo_da_Velha" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="next">Jogo_Da_Velha</h4>
+                </div>
+                <div class="modal-body col-sm-12">
+
+                    <div class="col-sm-6">
+                        <table cellpadding="10" class="col-sm-12 text-center text-uppercase">
+                            <tr>
+                                <th id="00"><img class="col-sm-12" src="/static/imagens/games/B.png"/></th>
+                                <th id="01"><img class="col-sm-12" src="/static/imagens/games/B.png"/></th>
+                                <th id="02"><img class="col-sm-12" src="/static/imagens/games/B.png"/></th>
+                            </tr>
+                            <tr>
+                                <th id="10"><img class="col-sm-12" src="/static/imagens/games/B.png"/></th>
+                                <th id="11"><img class="col-sm-12" src="/static/imagens/games/B.png"/></th>
+                                <th id="12"><img class="col-sm-12" src="/static/imagens/games/B.png"/></th>
+                            </tr>
+                            <tr>
+                                <th id="20"><img class="col-sm-12" src="/static/imagens/games/B.png"/></th>
+                                <th id="21"><img class="col-sm-12" src="/static/imagens/games/B.png"/></th>
+                                <th id="22"><img class="col-sm-12" src="/static/imagens/games/B.png"/></th>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <button onclick="Jogo_Da_Velha('New','','');">New game</button>
+                        <button onclick="generate_list();">Enter Game</button>
+
+                        <div id="mensagems" class="col-sm-12">
+
+                        </div>
+
+                        <div id="game_list" class="col-sm-12 row">
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    </body>
 {% endblock %}

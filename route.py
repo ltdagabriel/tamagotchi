@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, Markup, url_for, redirect, request, flash, jsonify
 from session import Session
-from objetos import usuario, tamagotchi, inventory, pokemon
+from objetos import usuario, tamagotchi, pokemon, hashgame
+
 route = Blueprint('route', __name__)
 
 
@@ -167,5 +168,38 @@ def actions():
         return jsonify({'action': action,
                         'value': value,
                         'id': id})
-    return jsonify({'error':'metodo invalido'})
+    return jsonify({'error': 'metodo invalido'})
 
+
+@route.route('/tamagotchi/buy', methods=['POST'])
+def buy():
+    PRICE = float(request.form['price'])
+    IMAGEM = str(request.form['poke'])
+
+    poke = pokemon.ListPokemon()
+
+    user = usuario.ListUsuario().get_logged_user()
+
+    if user.money > PRICE:
+        poke.saveDatabase(name=IMAGEM, user_id=user.id)
+    else:
+        flash("Voce so tem $ " + str(user.money) + " falta $ " + str(PRICE - user.money) + ".")
+    return redirect(url_for('.index'))
+
+
+@route.route('/user/get', methods=['POST'])
+def getUser():
+    user = usuario.ListUsuario().get_logged_user()
+    return jsonify({'user': user.username})
+
+
+@route.route('/games/jogo_da_velha', methods=['POST'])
+def load_hash():
+    user = usuario.ListUsuario().get_logged_user()
+    if user:
+        if str(request.form['game_name']) == 'Jogo_da_Velha':
+            return hashgame.hashgame().game(comand=str(request.form['comand']),
+                                            game=request.form['game'],
+                                            param=str(request.form['param']),
+                                            player=user.username)
+    return jsonify({'error': 'Algo de errado aconteceu'})
