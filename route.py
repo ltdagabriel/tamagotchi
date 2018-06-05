@@ -208,3 +208,14 @@ def load_hash():
 @route.route('/info')
 def comoJogar():
     return render_template('comoJogar.html')
+
+
+@frontend.route('/reward', methods=['POST'])
+def Reward():
+    player1 = str(request.form['player1'])
+    player2 = str(request.form['player2'])
+    usuario.ListUsuario().UserReward(int(request.form['reward']), player1)
+    if player2:
+        usuario.ListUsuario().UserReward(int(request.form['reward']), player2)
+
+    return jsonify({'success': 'usuario recebeu sua recompensa!'})

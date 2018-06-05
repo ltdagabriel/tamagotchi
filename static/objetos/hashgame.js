@@ -14,7 +14,6 @@ function Jogo_Da_Velha(comand, param, game_id) {
             type: 'POST',
             success: function (response) {
                 if (response.game) {
-                    console.log(response)
                     makeboard(response.game, response.key)
                 }
             },
@@ -208,4 +207,26 @@ function generate_list() {
             }
         }
     );
+}
+
+function UserReward(money,player1,player2){
+    $.ajax(
+        {
+            dataType: 'json',
+            url: '/reward',
+            data: jQuery.param({
+                    'reward': money,
+                    'player1': player1,
+                    'player2': player2
+            }),
+            type: 'POST',
+            success: function(response) {
+                console.log(response)
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        }
+    )
+
 }

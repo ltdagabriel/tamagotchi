@@ -22,17 +22,29 @@ class Objetohashgame():
         self.player1_msg = []
         self.player2_msg = []
 
-    def LoadMovements(self, player):
-        movimentos_possiveis = []
+    def machineMove(self):
+        moves = self.LoadMovements()
+        move = moves[randint(0, len(moves))]
 
-        random_movements = ['00', '01', '02', '10', '11', '12', '20', '21', '22']
+        self.Movement(player=self.player2, casa=move)
 
-    def verifica_movimento(self, movement):
-        linha = movement[0]
-        coluna = movement[1]
+    def LoadMovements(self):
+        moves = ['00', '01', '02', '10', '11', '12', '20', '21', '22']
+        movimentos_possiveis = list(filter(self.valid_moves, moves))
+        # bestmoves = self.findmove()
+        # if len(bestmoves):
+        #     return bestmoves
+        return movimentos_possiveis
 
+    def valid_moves(self, movement):
+        linha = int(movement[0])
+        coluna = int(movement[1])
+        if self.board[linha][coluna] == 'B':
+            return True
+        return False
+
+    def findmove(self):
         modded = []
-
         d1 = []
         d2 = []
 
@@ -40,46 +52,62 @@ class Objetohashgame():
             v1 = []
             v2 = []
             for j in range(0, 3):
-                if linha == i:
-                    v1.append(self.board[i][j])
-                if coluna == i:
-                    v2.append(self.board[j][i])
+                v1.append(self.board[i][j])
+                v2.append(self.board[j][i])
+
                 if i == j:
                     d1.append(self.board[i][j])
                 if i + j == 2:
                     d2.append(self.board[i][j])
 
-            modded.append(v1)
-            modded.append(v2)
+            modded.append([v1, str(i) + 'X'])
+            modded.append([v2, 'X' + str(j)])
 
-        if linha == coluna:
-            modded.append(d1)
-        if linha + coluna == 2:
-            modded.append(d2)
+        modded.append([d1, 'XX'])
 
-        opcoes = []
+        modded.append([d2, 'YY'])
 
+        new = []
         for x in modded:
-            peca, nivel = self.level_line(x)
-            opcoes.append({'peca': peca, 'nivel': nivel})
-            if nivel == 1:
-                return peca
+            if self.level_line(x) == 2:
+                new.append(self.loadBpostion(x))
+        if len(new):
+            return new
+
         return None
 
-    def level_line(self, line):
-        X = line.count('X')
-        B = line.count('B')
-        O = line.count('O')
-        if X == 3:
-            return 'X', 1
-        elif O == 3:
-            return 'O', 1
-        elif X == 2 and B == 1:
-            return 'X', 2
-        elif O == 2 and B == 1:
-            return 'O', 2
+    def loadBpostion(self, x):
+        if x[1] == 'XX':
+            for i in range(3):
+                if x[0][i][i] == 'B':
+                    return str(i)+str(i)
+        elif x[1] == 'YY':
+            for i in range(3):
+                if x[0][i][2-i] == 'B':
+                    return str(i)+str(i)
+        elif x[1][0] == 'X':
+            for i in range(3):
+                if x[0][i][int(x[1][1])] == 'B':
+                    return str(i)+x[1][1]
         else:
-            return 'B', 3
+            for i in range(3):
+                if x[0][int(x[1][1])][i] == 'B':
+                    return x[1][1] + str(i)
+
+    def level_line(self, line):
+        X = line[0].count('X')
+        B = line[0].count('B')
+        O = line[0].count('O')
+        if X == 3:
+            return 1
+        elif O == 3:
+            return 1
+        elif X == 2 and B == 1:
+            return 2
+        elif O == 2 and B == 1:
+            return 2
+        else:
+            return 3
 
     def Join(self, player):
         p = 0
@@ -100,6 +128,13 @@ class Objetohashgame():
         self.last_action = datetime.now()
         self.board[int(casa[0])][int(casa[1])] = self.player2_piece if self.player2 == player else self.player1_piece
         self.next_piece = self.player2_piece if self.player1 == player else self.player1_piece
+
+    def isMachine(self):
+        if self.player2 == 'machine' and self.player2_piece == self.next_piece:
+            return True
+        elif self.player1 == 'machine' and self.player1_piece == self.next_piece:
+            return True
+        return False
 
     def get(self):
         return {'player1': self.player1,
@@ -129,11 +164,14 @@ class hashgame():
                 self.games = []
 
             if comand == 'New':
-
                 pieces = ['X', 'O']
                 rand = randint(0, 1)
                 key = len(self.games)
+                player2 = None
+                if param == 'pvm':
+                    player2 = 'machine'
                 self.games.append(Objetohashgame(player1=player,
+                                                 player2=player2,
                                                  key=key,
                                                  player1_piece=pieces[rand],
                                                  player2_piece=pieces[0 if rand else 1]))
@@ -149,6 +187,9 @@ class hashgame():
 
             if comand == 'Wait':
                 key = int(game)
+                if self.games[key].isMachine():
+                    self.games[key].machineMove()
+
                 return jsonify({'key': key,
                                 'game': self.games[key].get()})
 
@@ -160,7 +201,7 @@ class hashgame():
                                 'game': self.games[key].get()})
 
             if comand == 'All':
-                return jsonify({'games': map(lambda x: x.get(), self.games)})
+                return jsonify({'games': list(map(lambda x: x.get(), self.games))})
 
     instance = None
 
