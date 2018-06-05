@@ -169,3 +169,6 @@ def actions():
                         'id': id})
     return jsonify({'error':'metodo invalido'})
 
+@route.route('/info')
+def comoJogar():
+    return render_template('comoJogar.html')
