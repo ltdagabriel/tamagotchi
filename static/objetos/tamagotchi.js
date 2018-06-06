@@ -126,7 +126,7 @@ function load_tamagotchi_list() {
                 setTimeout(load_tamagotchi_list, 1 * 1000);
             }
             else {
-                window.location.href = ("/")
+                window.location.href = ("/logout")
             }
         },
         error: function (error) {

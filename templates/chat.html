@@ -1,0 +1,23 @@
+{% block head %}
+    <link rel="stylesheet" href="/static/css/chat.css" type="text/css">
+
+    <script src="/static/style/jquery.min.js"></script>
+    <script src="/static/js/chat.js"></script>
+    <script src="/static/style/bootstrap.min.js"></script>
+{% endblock %}
+<div id="chat" >
+    <div id="chat_mensagens">
+        <p>[john]: ola tudo bem!</p>
+        <p>[doh]: sim e vc?</p>
+    </div>
+    <form id="send" action="/mensagem" method="post">
+        <div class="col-sm-8">
+            <input type="text" name="msg">
+        </div>
+        <div class="col-sm-4">
+            <input type="submit" value="ok" onclick="location.href='/'">
+
+        </div>
+    </form>
+</div>
+<a href="#" onclick="toglechat()" id="open_chat">CHAT</a>

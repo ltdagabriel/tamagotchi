@@ -116,6 +116,11 @@ class ListUsuario:
                 user.money = user.money + money
                 session.commit()
 
+        def getbyid(self,id):
+            user = list(sessionmaker(bind=engine)().query(User).filter(User.id.in_([id])))
+            if len(user):
+                return user[0]
+
         def login(self, username, password):
             user = list(sessionmaker(bind=engine)().query(User).filter(User.username.in_([username]),
                                                                        User.password.in_([password])))

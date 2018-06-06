@@ -131,6 +131,19 @@ def get_tamagotchis():
         return redirect('.index')
 
 
+@route.route('/tamagotchis', methods=['POST'])
+def get_all_tamagotchis():
+    if request.method == 'POST':
+        sessao = Session()
+        user = sessao.get_logged_user()
+
+        tamagotchis = sessao.load_tamagotchi()
+
+        return jsonify(list(map(lambda x: x.to_json(), tamagotchis)))
+    else:
+        return redirect('.index')
+
+
 @route.route('/tamagotchi', methods=['POST'])
 def get_tamagotchi():
     if request.method == 'POST':
@@ -190,8 +203,21 @@ def buy():
 @route.route('/user/get', methods=['POST'])
 def getUser():
     user = usuario.ListUsuario().get_logged_user()
-    return jsonify({'user': user.username})
+    return jsonify({'user': {'username': user.username,
+                             'img': user.imagem,
+                             'money': user.money}})
 
+
+@route.route('/mensagem', methods=['POST', 'GET'])
+def chat():
+    sessao = Session()
+    if request.method == 'POST':
+        msg = str(request.form['msg'])
+        user = sessao.get_logged_user()
+        sessao.sendmensagem(msg, user)
+        return redirect(url_for('.index'))
+    if request.method == 'GET':
+        return jsonify(list(map(lambda x: x.to_json(), sessao.getmensagem())))
 
 @route.route('/games/jogo_da_velha', methods=['POST'])
 def load_hash():

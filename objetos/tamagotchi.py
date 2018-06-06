@@ -2,7 +2,7 @@
 from sqlalchemy.orm import sessionmaker
 from session import *
 from database import *
-from objetos import pokemon
+from objetos import pokemon, usuario
 import _thread
 import time
 from datetime import timedelta
@@ -23,7 +23,7 @@ class LoadTamagotchi():
                     list(lista.load('id', x.id))[0].update()
             session.close()
             time.sleep(1)
-            self.run(threadName, delay+1)
+            self.run(threadName, delay + 1)
         except ValueError:
             print("Error")
 
@@ -71,7 +71,6 @@ class ObjetoTamagotchi:
         self.health = []
         self.status = ObjetoStatus()
 
-
     def setstatus(self, status):
         self.status.setStatus(self.tamagotchi.id, status)
 
@@ -94,7 +93,6 @@ class ObjetoTamagotchi:
 
         delta = (datetime.now() - self.tamagotchi.last_update).total_seconds()
 
-
         # Atualiza taxa de decaimento dos status
         if self.findstatus('Triste'):
             happy = 0.01
@@ -115,9 +113,9 @@ class ObjetoTamagotchi:
             self.tamagotchi.name_pokemon = poke.evolucao
 
         # atualiza barras
-        self.health.append(-1*delta*health)
-        self.happy.append(-1*delta*happy)
-        self.hunger.append(-1*delta*hunger)
+        self.health.append(-1 * delta * health)
+        self.happy.append(-1 * delta * happy)
+        self.hunger.append(-1 * delta * hunger)
 
         # atualuza status
         if self.tamagotchi.health <= 0 or self.tamagotchi.hunger <= 0 or self.tamagotchi.happy <= 0:
@@ -172,18 +170,28 @@ class ObjetoTamagotchi:
         return self.tamagotchi.__getattribute__(by) == value
 
     def calculeage(self):
-        return humanize.naturaltime(self.tamagotchi.last_update - self.tamagotchi.birthday)
+        time = (self.tamagotchi.last_update - self.tamagotchi.birthday).total_seconds()
+        day = time // (24 * 3600)
+        time = time % (24 * 3600)
+        hour = time // 3600
+        time %= 3600
+        minutes = time // 60
+        time %= 60
+        seconds = time
+
+        return "%dd %d:%d:%ds" % (day, hour, minutes, seconds)
 
     def to_json(self):
         tamagotchi = {}
 
         poke = self.poke.loadDatabasebyName(self.tamagotchi.name_pokemon, self.tamagotchi.user_id)[0]
-
+        user = usuario.ListUsuario().getbyid(self.tamagotchi.user_id)
         for i in Tamagotchi.__table__.columns.keys():
             tamagotchi.update({i: self.tamagotchi.__getattribute__(i)})
 
         tamagotchi.update({'age': self.calculeage()})
         tamagotchi.update({'state': self.status.to_json(self.tamagotchi.id)})
+        tamagotchi.update({'user_name': user.username})
 
         return {'tamagotchi': tamagotchi,
                 'pokemon': poke.to_json()}
@@ -207,7 +215,9 @@ class ListTamagotchi:
                     x.happy.append(happy)
 
         def load_all(self):
-            return self.tamagotchis
+            return sorted(self.tamagotchis,
+                          key=lambda tama: (tama.tamagotchi.last_update - tama.tamagotchi.birthday).total_seconds(),
+                          reverse=True)
 
         def load(self, by, value):
             return filter(lambda x: x.filter(by, value), self.tamagotchis)

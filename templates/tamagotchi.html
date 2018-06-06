@@ -1,5 +1,6 @@
 {%- extends "bootstrap/base.html" %}
 {% import 'navbar.html' as navbar %}
+{% import 'chat.html' as chat %}
 
 {% block title %}
     {{ titulo }}
@@ -125,17 +126,19 @@
             </div>
         </div>
 
-        <div id="" class="col-sm-2 my_list text-center">
-            <h4><img class="pokemon-icon my-icon" src="/static/imagens/favicon.png">Perfil</h4>
+        <div id="perfil" class="col-sm-2 my_list  text-center" style="margin-bottom: 10px">
+            <h4><img class="pokemon-icon my-icon" src="/static/imagens/favicon.png">Perfil
+            </h4>
+            <img id="usuario_imagem" class="user-icon my-icon" src="/static/imagens/personagens/ashe.png">
+            <div id="usuario_nome" class="">
+                John Doe
+            </div>
+            <br/>
+            <div>
+                <img class="user-icon my-icon" src="/static/imagens/coin.png">
+                <div id="usuario_money" class="">$ 1357</div>
+            </div>
             <hr/>
-                    <i id="username">John Doe</i>
-                    <br/>
-                    <img id="imagem" class="user-icon my-icon" src="/static/imagens/coin.png">
-                    <i id="money">1357</i>
-                    <img id="imagem" class="user-icon my-icon" src="/static/imagens/personagens/ashe.png">
-                    <div id="qntBixo" class="text-left my-msg">
-                        3
-                    </div>
         </div>
 
         <div id="usuarios_online" class="col-sm-2 my_list text-center">
@@ -247,6 +250,6 @@
         </div>
     </div>
     </div>
-
+    {{ chat }}
     </body>
 {% endblock %}

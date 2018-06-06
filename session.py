@@ -6,10 +6,20 @@ from database import *
 engine = create_engine('sqlite:///tutorial.db', echo=False)
 
 
+class ObjetoMsg():
+    def __init__(self, msg, user):
+        self.msg = msg
+        self.user = user.username
+        self.time = datetime.now()
+
+    def to_json(self):
+        return "["+self.user+"] "+ self.msg
+
 class Session:
     class __Session:
         def __init__(self):
             self.usuario = usuario.ListUsuario()
+            self.chat = []
 
         def get_logged_user(self):
             return self.usuario.get_logged_user()
@@ -18,6 +28,12 @@ class Session:
             return self.usuario.cadastro(username=username,
                                          password=password,
                                          imagem=imagem)
+
+        def sendmensagem(self, msg, user):
+            self.chat.append(ObjetoMsg(msg, user))
+
+        def getmensagem(self):
+            return self.chat
 
         def login(self, username, password):
             return self.usuario.login(username, password)

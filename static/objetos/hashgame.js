@@ -24,56 +24,6 @@ function Jogo_Da_Velha(comand, param, game_id) {
     );
 }
 
-function Jogo_Da_Velha_Vitoria(board) {
-    let linha = 1
-    let anterior_linha = null
-    let coluna = 1
-    let anterior_coluna = null
-    let diagonal1 = 1
-    let diagonal2 = 1
-    let anterior_diagonal1 = null
-    let anterior_diagonal2 = null
-
-    for (let i = 0; i < board.length; i++) {
-        if (!anterior_diagonal1)
-            anterior_diagonal1 = board[i][i]
-        else if (anterior_diagonal1 == board[i][i]) {
-            diagonal1++
-        }
-        if (!anterior_diagonal2)
-            anterior_diagonal2 = board[2 - i][2 - i]
-        else if (anterior_diagonal2 == board[2 - i][2 - i]) {
-            diagonal2++
-        }
-
-
-        linha = 1
-        anterior_linha = null
-        coluna = 1
-        anterior_coluna = null
-
-        for (let j = 0; j < board[i].length; j++) {
-            if (!anterior_linha)
-                anterior_linha = board[i][j]
-            else if (anterior_linha == board[i][j]) {
-                linha++
-            }
-            if (!anterior_coluna)
-                anterior_coluna = board[j][i]
-            else if (anterior_coluna == board[j][i]) {
-                coluna++
-            }
-        }
-        if ((linha == 3 && anterior_linha != 'B') || (coluna == 3 && anterior_coluna != 'B')) {
-            return true
-        }
-
-    }
-    if ((diagonal1 == 3 && anterior_diagonal1 != 'B') || (diagonal2 == 3 && anterior_diagonal2 != 'B')) {
-        return true
-    }
-    return false
-}
 
 function makeboard(game, key) {
     $.ajax(
@@ -82,7 +32,7 @@ function makeboard(game, key) {
             url: '/user/get',
             type: 'POST',
             success: function (response) {
-                let user = response.user
+                let user = response.user.username
 
                 console.log(game, response)
 

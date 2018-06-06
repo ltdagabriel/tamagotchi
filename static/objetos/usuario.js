@@ -1,7 +1,31 @@
 $(document).ready(() => {
     load_users()
+    load_user()
 })
 var load_user_error = 0
+
+function load_user() {
+    $.ajax({
+        dataType: 'json',
+        url: '/user/get',
+        type: 'POST',
+        success: function (response) {
+            $('#usuario_nome').text(response.user.username)
+            $('#usuario_imagem').attr({'src': '/static/imagens/personagens/' + response.user.img})
+            $('#usuario_money').text("$ " + response.user.money)
+
+            setTimeout(load_user, 1000);
+
+        },
+        error: function (error) {
+            load_user_error += 1
+            if (load_user_error <= 5) {
+                setTimeout(load_user, 1000);
+            }
+            console.error(error)
+        }
+    })
+}
 
 function load_users() {
     $.ajax({
