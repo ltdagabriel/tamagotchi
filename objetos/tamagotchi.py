@@ -87,21 +87,21 @@ class ObjetoTamagotchi:
         if self.findstatus('Morto'):
             return
 
-        health = 0.001
-        hunger = 0.001
-        happy = 0.001
+        health = 0.1
+        hunger = 0.1
+        happy = 0.1
 
         delta = (datetime.now() - self.tamagotchi.last_update).total_seconds()
 
         # Atualiza taxa de decaimento dos status
         if self.findstatus('Triste'):
-            happy = 0.01
+            happy = 0.5
 
         if self.findstatus('Doente'):
-            health = 0.01
+            health = 0.5
 
         if self.findstatus('Faminto'):
-            hunger = 0.01
+            hunger = 0.5
 
         # Evolução
         pokelist = pokemon.ListPokemon()

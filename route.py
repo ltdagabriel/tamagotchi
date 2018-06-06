@@ -194,7 +194,7 @@ def buy():
     user = usuario.ListUsuario().get_logged_user()
 
     if user.money > PRICE:
-        poke.saveDatabase(name=IMAGEM, user_id=user.id)
+        poke.buy(PRICE, IMAGEM, user.id)
     else:
         flash("Voce so tem $ " + str(user.money) + " falta $ " + str(PRICE - user.money) + ".")
     return redirect(url_for('.index'))

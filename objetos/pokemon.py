@@ -1,6 +1,7 @@
 from sqlalchemy.orm import sessionmaker
 from database import *
 from session import *
+from objetos import usuario
 
 
 class ObjetoPokemon:
@@ -301,6 +302,10 @@ class ListPokemon:
                         break
 
             return sales
+
+        def buy(self, price, poke, user):
+            usuario.ListUsuario().money(price, user)
+            self.saveDatabase(name=poke, user_id=user)
 
         def loadDatabasebyName(self, name, user_id):
             s = sessionmaker(bind=engine)()

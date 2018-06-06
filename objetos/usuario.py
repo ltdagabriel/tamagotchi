@@ -88,6 +88,14 @@ class ListUsuario:
             self.set_usuario(user)
             return True
 
+        def money(self, price, user):
+            session = sessionmaker(bind=engine)()
+
+            user = session.query(User).filter(User.id.in_([str(user)])).first()
+            user.money = user.money - price
+
+            session.commit()
+
         def set_usuario(self, usuario):
             user = list(filter(lambda x: x.user.id == usuario.id, self.usuario))
             if len(user):
